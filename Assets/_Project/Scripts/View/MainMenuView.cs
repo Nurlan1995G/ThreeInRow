@@ -8,5 +8,7 @@ namespace Assets._Project.Scripts
         public Button NewGameButton;
         public Button RecordsButton;
         public Button ExitButton;
+
+
     }
 }
