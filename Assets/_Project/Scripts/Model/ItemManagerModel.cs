@@ -3,37 +3,38 @@ using UnityEngine;
 
 namespace Assets._project.CodeBase
 {
-    public class ItemManager : MonoBehaviour
+    public class ItemManagerModel
     {
-        [SerializeField] private Vector3 _startPosition;
-
         private Dictionary<TypeItem, List<Item>> _itemsByType;
         private List<Item> _items;
-        private List<Item> _reserveItems;  
+        private List<Item> _reserveItems;
+        
+        private Vector3 _startPosition;
 
-        public void Construct(List<Item> item)
+        public ItemManagerModel(List<Item> items, Vector3 startPosition)
         {
-            _items = new List<Item>(item);  
+            _items = items;
+            _startPosition = startPosition;
             _reserveItems = new List<Item>(); 
 
             PopulateItemByType();
         }
 
-        public Item GetRandomBall()
+        public Item GetRandomItem()
         {
             if (_items.Count > 0)
             {
                 int randomIndex = Random.Range(0, _items.Count);
-                Item ball = _items[randomIndex];
+                Item item = _items[randomIndex];
                 _items.RemoveAt(randomIndex);
-                return ball;
+                return item;
             }
             else if (_reserveItems.Count > 0)
             {
                 int randomIndex = Random.Range(0, _reserveItems.Count);
-                Item ball = _reserveItems[randomIndex];
+                Item item = _reserveItems[randomIndex];
                 _reserveItems.RemoveAt(randomIndex);
-                return ball;
+                return item;
             }
 
             return null;  
@@ -49,7 +50,7 @@ namespace Assets._project.CodeBase
                 _reserveItems.Add(item);  
         }
 
-        private void PopulateItemByType()
+        private void PopulateItemByType()  //Заполнить тип предмета
         {
             _itemsByType = new Dictionary<TypeItem, List<Item>>();
 

@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ManagerData:
     TotalRows: 10
-    TotalColumns: 13
+    TotalColumns: 12
     RowsToFill: 5
-    CellSize: 0.87
-    TotalBallsToLoad: 50
+    CellSize: 1
+    TotalItemsToLoad: 50
+    StartPosition: {x: -3.5, y: 0, z: 0}
   BallData:
     MinSpeed: 1
     MaxSpeed: 3

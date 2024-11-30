@@ -1,69 +1,32 @@
-﻿using UnityEngine;
+﻿using Assets._project.CodeBase;
+using Assets._project.Config;
+using System.Collections.Generic;
+using UnityEngine;
 
-namespace Assets._Project.Scripts
+namespace Assets._Project.Scripts.Controller
 {
-    public class GameController
+    public class GameController : MonoBehaviour
     {
-        private readonly GameState gameState;
-        private readonly GridModel gridModel;
-        private readonly GameView view;
-        private readonly ScoreManager scoreManager;
+        [SerializeField] private GameConfig _gameConfig;
+        [SerializeField] private List<Point> _cells; // Загружаются с уровня
+        [SerializeField] private List<Item> _items;   // Загружаются с уровня
+        [SerializeField] private GameView _gameView;
 
-        public GameController(GameState gameState, GridModel gridModel, GameView view, ScoreManager scoreManager)
+        private ItemManagerModel _itemManager;
+        private GridManagerModel _gridManagerModel;
+
+        private void Start()
         {
-            this.gameState = gameState;
-            this.gridModel = gridModel;
-            this.view = view;
-            this.scoreManager = scoreManager;
-
-            view.OnCellClicked += HandleCellClick;
-            InitializeGame();
+            Initialize();
         }
 
-        private void InitializeGame()
+        private void Initialize()
         {
-            gridModel.InitializeGrid(() => Random.Range(1, 5));
-            UpdateView();
-        }
+            _itemManager = new ItemManagerModel(_items, _gameConfig.ManagerData.StartPosition);
+            _gridManagerModel = new GridManagerModel(_itemManager, _gameConfig.ManagerData, _cells);
 
-        private void HandleCellClick(int x, int y)
-        {
-            var matches = gridModel.GetMatches(x, y);
-            if (matches.Count > 0)
-            {
-                gridModel.RemoveMatches(matches);
-                gridModel.CollapseGrid(() => Random.Range(1, 5));
-
-                int gainedScore = scoreManager.CalculateScore(matches.Count, gameState.PlayerMoves);
-                gameState.UpdateScore(gainedScore);
-                gameState.IncrementMoves();
-
-                UpdateView();
-            }
-
-            if (scoreManager.IsGameOver(gameState.PlayerScore))
-            {
-                EndGame();
-            }
-        }
-
-        private void UpdateView()
-        {
-            var gridData = gridModel.GetGridData();
-            for (int x = 0; x < gridData.GetLength(0); x++)
-            {
-                for (int y = 0; y < gridData.GetLength(1); y++)
-                {
-                    view.UpdateCell(x, y, GetSpriteForValue(gridData[x, y]));
-                }
-            }
-        }
-
-        private Sprite GetSpriteForValue(int value) => /* Заглушка для получения спрайта по значению */ null;
-
-        private void EndGame()
-        {
-            // Обработка завершения игры.
+            // Передача данных для визуализации в GameView
+            _gameView.InitializeGrid(_cells, _itemManager, _gameConfig.ManagerData.CellSize);
         }
     }
 }

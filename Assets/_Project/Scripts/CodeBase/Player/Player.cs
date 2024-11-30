@@ -16,7 +16,7 @@ namespace Assets._project.CodeBase
 
         public PlayerData PlayerData { get; private set; }
 
-        public void Construct(PlayerData playerData, PlayerInput input, ParticleSystem effectNextBall, ItemManager ballManager)
+        public void Construct(PlayerData playerData, PlayerInput input, ParticleSystem effectNextBall, ItemManagerModel ballManager)
         {
             PlayerData = playerData;
             _input = input;

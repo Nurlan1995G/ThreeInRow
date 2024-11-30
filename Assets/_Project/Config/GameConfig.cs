@@ -32,11 +32,12 @@ namespace Assets._project.Config
     [Serializable]
     public class ManagerData
     {
-        public int TotalRows = 10;
-        public int TotalColumns = 8;
+        public int TotalRows = 12;
+        public int TotalColumns = 10;
         public int RowsToFill = 5;
         public float CellSize = 1.0f;
-        public int TotalBallsToLoad = 50; 
+        public int TotalItemsToLoad = 50;
+        public Vector3 StartPosition = new Vector3(-2.5f,2,0);
     }
 
     [Serializable]
