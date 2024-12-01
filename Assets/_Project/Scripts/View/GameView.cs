@@ -1,31 +1,104 @@
-﻿using System;
+﻿using Assets._project.Config;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
-namespace Assets._Project.Scripts
+namespace Assets._project.CodeBase
 {
     public class GameView : MonoBehaviour
     {
-        public Action<int, int> OnCellClicked;
-        public Transform GridParent;
-        public GridCellView[,] CellViews;
+        [SerializeField] private TextMeshProUGUI _scoreText;
+        [SerializeField] private TextMeshProUGUI _gameOverText;
 
-        public void InitializeGrid(int width, int height, Func<GridCellView> createCell)
+        private List<Item> _itemsPool = new List<Item>();
+        private ManagerData _managerData;
+
+        public void Initialize(ManagerData managerData)
         {
-            CellViews = new GridCellView[width, height];
-            for (int x = 0; x < width; x++)
+            _managerData = managerData;
+        }
+
+        /// Расставляет предметы на указанных ячейках
+        public void InitializeGrid(List<Point> cells, ItemManagerModel itemManager, float cellSize)
+        {
+            foreach (var cell in cells)
             {
-                for (int y = 0; y < height; y++)
+                if (!cell.IsBusy)
                 {
-                    var cell = createCell();
-                    cell.transform.SetParent(GridParent);
-                    CellViews[x, y] = cell;
+                    Item item = itemManager.GetRandomItem();
+
+                    if (item != null)
+                        // Активируем и размещаем предмет
+                        ActivateAndPlaceItem(item, cell);
                 }
             }
         }
 
-        public void UpdateCell(int x, int y, Sprite content)
+        public void RemoveItem(Item item)
         {
-            CellViews[x, y].SetContent(content);
+            item.Deactivate();
+            item.transform.position = _managerData.StartPosition;
         }
+
+        public void UpdateScore(int score)
+        {
+            _scoreText.text = $"Score: {score}";
+        }
+
+        public void ShowGameOver(int finalScore)
+        {
+            _gameOverText.text = $"Game Over! Final Score: {finalScore}";
+            _gameOverText.gameObject.SetActive(true);
+        }
+
+        public Item GetItemFromPool()
+        {
+            foreach (var item in _itemsPool)
+            {
+                if (!item.gameObject.activeSelf)
+                {
+                    item.gameObject.SetActive(true);
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        public void ReturnItemToPool(Item item)
+        {
+            item.gameObject.SetActive(false);
+        }
+
+        private void ActivateAndPlaceItem(Item item, Point cell)
+        {
+            Vector3 itemPosition = cell.GetPlaceItem(item);
+
+            if (itemPosition == Vector3.zero)
+            {
+                Debug.LogWarning($"Не удалось разместить предмет '{item.name}' в ячейке '{cell.name}': ячейка занята или некорректное состояние.");
+                return;
+            }
+
+            item.Activate();
+            item.SetCurrentPoint(cell);
+            item.transform.localPosition = itemPosition;
+            cell.MarkAsBusy();
+            _itemsPool.Add(item);
+        }
+
+
+        /* public void FillGridWithItems()  //Заполните Сетку Элементами
+         {
+             for (int i = 0; i < _cells.Count; i++)
+             {
+                 if (i < _managerData.TotalItemsToLoad && !_cells[i].IsBusy)
+                 {
+                     Item item = _itemManager.GetRandomItem();
+
+                     if (item != null)
+                         _cells[i].GetPlaceItem(item);
+                 }
+             }
+         }*/
     }
 }

@@ -8,16 +8,19 @@ namespace Assets._project.CodeBase
 
         public bool IsBusy => _isBusy;
 
-        public void PlaceBall(Item item)
+        public Vector3 GetPlaceItem(Item item)
         {
-            if (!_isBusy && item.GetCurrentPoint() == null) 
+            if (!_isBusy && item.GetCurrentPoint() == null)
             {
-                item.transform.position = transform.position;
-                item.gameObject.SetActive(true);
-                item.SetCurrentPoint(this);
                 _isBusy = true;
+                return transform.position;
             }
+
+            return Vector3.zero;
         }
+
+        public void MarkAsBusy() => 
+            _isBusy = true;
 
         public void FreeCell() => 
             _isBusy = false;

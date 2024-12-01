@@ -1,69 +1,87 @@
-﻿using UnityEngine;
+﻿using Assets._project.CodeBase;
+using Assets._project.Config;
+using System.Collections.Generic;
+using UnityEngine;
 
-namespace Assets._Project.Scripts
+namespace Assets._Project.Scripts.Controller
 {
-    public class GameController
+    public class GameController : MonoBehaviour
     {
-        private readonly GameState gameState;
-        private readonly GridModel gridModel;
-        private readonly GameView view;
-        private readonly ScoreManager scoreManager;
+        [SerializeField] private GameConfig _gameConfig;
+        [SerializeField] private List<Point> _cells; // Загружаются с уровня
+        [SerializeField] private List<Item> _items;   // Загружаются с уровня
+        [SerializeField] private GameView _gameView;
+        [SerializeField] private PlayerInput _playerInput;
 
-        public GameController(GameState gameState, GridModel gridModel, GameView view, ScoreManager scoreManager)
+        private ItemManagerModel _itemManager;
+        private GridManagerModel _gridManagerModel;
+
+        private void Start()
         {
-            this.gameState = gameState;
-            this.gridModel = gridModel;
-            this.view = view;
-            this.scoreManager = scoreManager;
-
-            view.OnCellClicked += HandleCellClick;
-            InitializeGame();
+            Initialize();
         }
 
-        private void InitializeGame()
+        private void Initialize()
         {
-            gridModel.InitializeGrid(() => Random.Range(1, 5));
-            UpdateView();
+            _itemManager = new ItemManagerModel(_items, _gameConfig.ManagerData.StartPosition);
+            _gridManagerModel = new GridManagerModel(_itemManager, _gameConfig.ManagerData, _cells);
+
+            _gameView.Initialize(_gameConfig.ManagerData);
+            _gameView.InitializeGrid(_cells, _itemManager, _gameConfig.ManagerData.CellSize);
+            _playerInput.OnItemClicked += HandleItemClick; 
         }
 
-        private void HandleCellClick(int x, int y)
+        private void HandleItemClick(Item clickedItem)
         {
-            var matches = gridModel.GetMatches(x, y);
-            if (matches.Count > 0)
+            var matchingItemsX = _itemManager.GetItemsInRow(clickedItem);
+            var matchingItemsY = _itemManager.GetItemsInColumn(clickedItem);
+
+            List<Item> matchedItems = new List<Item>();
+
+            // Сравнение по строке
+            matchedItems.AddRange(matchingItemsX.FindAll(item => item.TypeItem == clickedItem.TypeItem));
+
+            // Если совпадения не найдены по строке, проверяем по столбцу
+            if (matchedItems.Count < 3)
             {
-                gridModel.RemoveMatches(matches);
-                gridModel.CollapseGrid(() => Random.Range(1, 5));
-
-                int gainedScore = scoreManager.CalculateScore(matches.Count, gameState.PlayerMoves);
-                gameState.UpdateScore(gainedScore);
-                gameState.IncrementMoves();
-
-                UpdateView();
+                matchedItems.Clear(); // Очищаем предыдущий список
+                matchedItems.AddRange(matchingItemsY.FindAll(item => item.TypeItem == clickedItem.TypeItem));
             }
 
-            if (scoreManager.IsGameOver(gameState.PlayerScore))
+            // Если найдены совпадения (больше или равно 3), деактивируем предметы
+            if (matchedItems.Count >= 3)
             {
-                EndGame();
+                DeactivateItems(matchedItems);
+            }
+            else
+            {
+                Debug.Log("Недостаточно совпадений.");
             }
         }
 
-        private void UpdateView()
+
+        private List<Item> FindMatchingItems(List<Item> items, TypeItem type)
         {
-            var gridData = gridModel.GetGridData();
-            for (int x = 0; x < gridData.GetLength(0); x++)
+            List<Item> matchingItems = new List<Item>();
+
+            foreach (var item in items)
             {
-                for (int y = 0; y < gridData.GetLength(1); y++)
+                if (item.TypeItem == type)
                 {
-                    view.UpdateCell(x, y, GetSpriteForValue(gridData[x, y]));
+                    matchingItems.Add(item);
                 }
             }
+
+            return matchingItems;
         }
 
-        private Sprite GetSpriteForValue(int value) => /* Заглушка для получения спрайта по значению */ null;
-
-        private void EndGame()
+        private void DeactivateItems(List<Item> items)
         {
-            // Обработка завершения игры.
+            foreach (var item in items)
+            {
+                _itemManager.ReplaceItem(item);
+                _gameView.RemoveItem(item);
+            }
         }
     }
 }

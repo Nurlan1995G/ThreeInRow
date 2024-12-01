@@ -1,63 +1,27 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Assets._project.CodeBase
 {
-    public class PlayerInput
+    public class PlayerInput : MonoBehaviour
     {
-        private Vector2 _aimDirection;
-        private Player _player;
-        private Camera _camera;
+        public event Action<Item> OnItemClicked;
 
-        private Vector2 _pullStartPoint;
-        private bool _isPulling;
-
-        public Vector2 AimDirection => _aimDirection;
-        public float PullDistance { get; private set; }  
-
-        public PlayerInput(Player player)
+        private void Update()
         {
-            _player = player;
-            _camera = Camera.main;
-        }
-
-        public void Update()
-        {
-            GetAimDirection();
-            CalculatePull();
-
-            if (IsChargingShot())
-                StartPull();
-        }
-
-        private Vector2 GetAimDirection()
-        {
-            Vector3 mousePosition = _camera.ScreenToWorldPoint(Input.mousePosition);
-            _aimDirection = new Vector2(mousePosition.x - _player.transform.position.x, mousePosition.y - _player.transform.position.y);
-            return _aimDirection.normalized;
-        }
-
-        public bool IsChargingShot() => 
-            Input.GetMouseButton(1);
-
-        public bool IsShotReleased() => 
-            Input.GetMouseButtonUp(1);
-
-        public void StartPull()
-        {
-            _pullStartPoint = _camera.ScreenToWorldPoint(Input.mousePosition);
-            _isPulling = true;
-        }
-
-        private void CalculatePull()
-        {
-            if (_isPulling && IsChargingShot())
+            if (Input.GetMouseButtonDown(0))
             {
-                Vector2 currentPoint = _camera.ScreenToWorldPoint(Input.mousePosition);
-                PullDistance = Vector2.Distance(_pullStartPoint, currentPoint);  
-            }
-            else if (IsShotReleased())
-            {
-                _isPulling = false;  
+                Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
+
+                if (hit.collider != null)
+                    Debug.Log($"Hit: {hit.collider.gameObject.name}");
+
+                if (hit.collider != null && hit.collider.TryGetComponent(out Item clickedItem))
+                {
+                    Debug.Log("Клик по предмету сработал");
+                    OnItemClicked?.Invoke(clickedItem);
+                }
             }
         }
     }
