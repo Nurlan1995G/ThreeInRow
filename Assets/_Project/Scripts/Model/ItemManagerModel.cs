@@ -20,6 +20,56 @@ namespace Assets._project.CodeBase
             PopulateItemByType();
         }
 
+        public List<Item> GetItemsInRow(Item item)
+        {
+            List<Item> itemsInRow = new List<Item>();
+
+            var currentPoint = item.GetCurrentPoint();
+            
+            if (currentPoint == null) 
+                return itemsInRow;
+
+            Vector3 position = currentPoint.transform.position;
+
+            foreach (var i in _items)
+            {
+                var point = i.GetCurrentPoint();
+               
+                if (point != null && Mathf.Approximately(point.transform.position.y, position.y))
+                    itemsInRow.Add(i);
+            }
+
+            return itemsInRow;
+        }
+
+        public List<Item> GetItemsInColumn(Item item)
+        {
+            List<Item> itemsInColumn = new List<Item>();
+
+            var currentPoint = item.GetCurrentPoint();
+
+            if (currentPoint == null) 
+                return itemsInColumn;
+
+            Vector3 position = currentPoint.transform.position;
+
+            foreach (var i in _items)
+            {
+                var point = i.GetCurrentPoint();
+
+                if (point != null && Mathf.Approximately(point.transform.position.x, position.x))
+                    itemsInColumn.Add(i);
+            }
+
+            return itemsInColumn;
+        }
+
+        public void ReplaceItem(Item oldItem)
+        {
+            oldItem.RemoveFromCurrentPoint();
+            AddAfterReset(oldItem);
+        }
+
         public Item GetRandomItem()
         {
             if (_items.Count > 0)
@@ -42,10 +92,6 @@ namespace Assets._project.CodeBase
 
         public void AddAfterReset(Item item)
         {
-            item.transform.position = _startPosition;
-            item.Deactivate();
-            Debug.Log(item.transform.position + " item position " + item.name);
-
             if (!_items.Contains(item) && !_reserveItems.Contains(item))
                 _reserveItems.Add(item);  
         }

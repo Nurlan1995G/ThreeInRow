@@ -1,5 +1,4 @@
 ﻿using Assets._project.Config;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -26,7 +25,6 @@ namespace Assets._project.CodeBase
 
         private void Update()
         {
-            _input.Update();
         }
 
         public void AddScore(int score)

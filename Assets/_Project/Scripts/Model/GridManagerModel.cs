@@ -19,19 +19,10 @@ namespace Assets._project.CodeBase
             _cells = cells;
             _gridZone = new GridZoneModel(_managerData);
 
-            InitializeCells();
-            //FillGridWithItems();
+            FindCells();
         }
 
-        public void PlaceBallAtNearestFreePoint(Item item)  //Поместите Мяч в Ближайшую Свободную Точку
-        {
-            Point nearestFreePoint = FindNearestFreePoint(item.transform.position);
-
-            /*if (nearestFreePoint != null)
-                nearestFreePoint.PlaceItem(item);  */
-        }
-
-        private void InitializeCells()
+        private void FindCells()
         {
             int index = 0;
 
@@ -47,42 +38,6 @@ namespace Assets._project.CodeBase
                     index++;
                 }
             }
-        }
-
-        public void FillGridWithItems()  //Заполните Сетку Элементами
-        { 
-            for (int i = 0; i < _cells.Count; i++)
-            {
-                if (i < _managerData.TotalItemsToLoad && !_cells[i].IsBusy)
-                {
-                    Item item = _itemManager.GetRandomItem();
-
-                    if (item != null)
-                        _cells[i].GetPlaceItem(item);
-                }
-            }
-        }
-
-        private Point FindNearestFreePoint(Vector3 position)  //Найдите ближайшую свободную точку
-        {
-            Point nearestPoint = null;
-            float minDistance = float.MaxValue;
-
-            foreach (Point point in _cells)
-            {
-                if (!point.IsBusy)
-                {
-                    float distance = Vector3.Distance(position, point.transform.position);
-
-                    if (distance < minDistance)
-                    {
-                        minDistance = distance;
-                        nearestPoint = point;
-                    }
-                }
-            }
-
-            return nearestPoint;
         }
     }
 }
