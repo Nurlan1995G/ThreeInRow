@@ -20,9 +20,12 @@ namespace Assets._project.CodeBase
                 if (hit.collider != null && hit.collider.TryGetComponent(out Item clickedItem))
                 {
                     Debug.Log("Клик по предмету сработал");
-                    OnItemClicked?.Invoke(clickedItem);
+                    Debug.Log(clickedItem.transform.position + " - clickedItem.transform.position");
+
+                   OnItemClicked?.Invoke(clickedItem);
                 }
             }
         }
     }
+
 }

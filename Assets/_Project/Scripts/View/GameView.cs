@@ -1,4 +1,5 @@
 ﻿using Assets._project.Config;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -28,7 +29,6 @@ namespace Assets._project.CodeBase
                     Item item = itemManager.GetRandomItem();
 
                     if (item != null)
-                        // Активируем и размещаем предмет
                         ActivateAndPlaceItem(item, cell);
                 }
             }
@@ -40,9 +40,9 @@ namespace Assets._project.CodeBase
             item.transform.position = _managerData.StartPosition;
         }
 
-        public void UpdateScore(int score)
+        public void UpdateScore(PlayerModel itemModel)
         {
-            _scoreText.text = $"Score: {score}";
+            _scoreText.text = $"Score: {itemModel.Score}";
         }
 
         public void ShowGameOver(int finalScore)
@@ -57,7 +57,7 @@ namespace Assets._project.CodeBase
             {
                 if (!item.gameObject.activeSelf)
                 {
-                    item.gameObject.SetActive(true);
+                    item.Activate();
                     return item;
                 }
             }
@@ -73,19 +73,21 @@ namespace Assets._project.CodeBase
         {
             Vector3 itemPosition = cell.GetPlaceItem(item);
 
-            if (itemPosition == Vector3.zero)
-            {
-                Debug.LogWarning($"Не удалось разместить предмет '{item.name}' в ячейке '{cell.name}': ячейка занята или некорректное состояние.");
-                return;
-            }
-
             item.Activate();
             item.SetCurrentPoint(cell);
-            item.transform.localPosition = itemPosition;
+            item.SetPosition(itemPosition);
             cell.MarkAsBusy();
             _itemsPool.Add(item);
         }
 
+        public void RemoveItems(List<Item> matchingItems)
+        {
+            foreach (var item in matchingItems)
+            {
+                item.Deactivate();
+                item.transform.position = _managerData.StartPosition;
+            }
+        }
 
         /* public void FillGridWithItems()  //Заполните Сетку Элементами
          {

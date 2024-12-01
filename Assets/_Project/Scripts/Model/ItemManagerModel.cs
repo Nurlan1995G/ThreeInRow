@@ -20,50 +20,6 @@ namespace Assets._project.CodeBase
             PopulateItemByType();
         }
 
-        public List<Item> GetItemsInRow(Item item)
-        {
-            List<Item> itemsInRow = new List<Item>();
-
-            var currentPoint = item.GetCurrentPoint();
-            
-            if (currentPoint == null) 
-                return itemsInRow;
-
-            Vector3 position = currentPoint.transform.position;
-
-            foreach (var i in _items)
-            {
-                var point = i.GetCurrentPoint();
-               
-                if (point != null && Mathf.Approximately(point.transform.position.y, position.y))
-                    itemsInRow.Add(i);
-            }
-
-            return itemsInRow;
-        }
-
-        public List<Item> GetItemsInColumn(Item item)
-        {
-            List<Item> itemsInColumn = new List<Item>();
-
-            var currentPoint = item.GetCurrentPoint();
-
-            if (currentPoint == null) 
-                return itemsInColumn;
-
-            Vector3 position = currentPoint.transform.position;
-
-            foreach (var i in _items)
-            {
-                var point = i.GetCurrentPoint();
-
-                if (point != null && Mathf.Approximately(point.transform.position.x, position.x))
-                    itemsInColumn.Add(i);
-            }
-
-            return itemsInColumn;
-        }
-
         public void ReplaceItem(Item oldItem)
         {
             oldItem.RemoveFromCurrentPoint();
@@ -88,6 +44,24 @@ namespace Assets._project.CodeBase
             }
 
             return null;  
+        }
+
+        public List<Item> FilterMatchingItems(Item clickedItem, List<Item> items)
+        {
+            Debug.Log("FilterMatchingItems");
+
+            List<Item> matchingItems = new List<Item>();
+
+            foreach (var item in items)
+            {
+                if (item.TypeItem == clickedItem.TypeItem)
+                {
+                    Debug.Log("типы совпали");
+                    matchingItems.Add(item);
+                }
+            }
+
+            return matchingItems;
         }
 
         public void AddAfterReset(Item item)
