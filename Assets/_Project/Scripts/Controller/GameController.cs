@@ -15,6 +15,7 @@ namespace Assets._Project.Scripts.Controller
 
         private ItemManagerModel _itemManager;
         private GridManagerModel _gridManagerModel;
+        private PlayerModel _playerModel;
 
         private void Start()
         {
@@ -25,6 +26,7 @@ namespace Assets._Project.Scripts.Controller
         {
             _itemManager = new ItemManagerModel(_items, _gameConfig.ManagerData.StartPosition);
             _gridManagerModel = new GridManagerModel(_itemManager, _gameConfig.ManagerData, _cells);
+            _playerModel = new PlayerModel(10, _gameView);
 
             _gameView.Initialize(_gameConfig.ManagerData);
             _gameView.InitializeGrid(_cells, _itemManager, _gameConfig.ManagerData.CellSize);
@@ -33,47 +35,31 @@ namespace Assets._Project.Scripts.Controller
 
         private void HandleItemClick(Item clickedItem)
         {
-            var matchingItemsX = _itemManager.GetItemsInRow(clickedItem);
-            var matchingItemsY = _itemManager.GetItemsInColumn(clickedItem);
+            Debug.Log("HandleItemClick");
 
-            List<Item> matchedItems = new List<Item>();
+            clickedItem.ActivateCollisionDetection();
 
-            // Сравнение по строке
-            matchedItems.AddRange(matchingItemsX.FindAll(item => item.TypeItem == clickedItem.TypeItem));
-
-            // Если совпадения не найдены по строке, проверяем по столбцу
-            if (matchedItems.Count < 3)
+            // Подписываемся на событие для получения соприкосновений
+            clickedItem.OnCollisionDetected += items =>
             {
-                matchedItems.Clear(); // Очищаем предыдущий список
-                matchedItems.AddRange(matchingItemsY.FindAll(item => item.TypeItem == clickedItem.TypeItem));
-            }
+                List<Item> matchingItems = _itemManager.FilterMatchingItems(clickedItem, items);
 
-            // Если найдены совпадения (больше или равно 3), деактивируем предметы
-            if (matchedItems.Count >= 3)
-            {
-                DeactivateItems(matchedItems);
-            }
-            else
-            {
-                Debug.Log("Недостаточно совпадений.");
-            }
-        }
-
-
-        private List<Item> FindMatchingItems(List<Item> items, TypeItem type)
-        {
-            List<Item> matchingItems = new List<Item>();
-
-            foreach (var item in items)
-            {
-                if (item.TypeItem == type)
+                if (matchingItems.Count >= 1) // Если есть хотя бы одно совпадение
                 {
-                    matchingItems.Add(item);
-                }
-            }
+                    matchingItems.Add(clickedItem);
+                    DeactivateItems(matchingItems);
+                    _playerModel.UpdateScore(matchingItems.Count);
 
-            return matchingItems;
-        }
+                    Debug.Log($"Удалено {matchingItems.Count} предметов!");
+                }
+                else
+                {
+                    Debug.Log("Совпадений не найдено.");
+                }
+
+                clickedItem.DeactivateCollisionDetection(); // Отключаем проверку после обработки
+            };
+    }
 
         private void DeactivateItems(List<Item> items)
         {

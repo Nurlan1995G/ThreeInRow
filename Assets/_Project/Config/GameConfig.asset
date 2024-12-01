@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: GameConfig
   m_EditorClassIdentifier: 
   ManagerData:
-    TotalRows: 10
+    TotalRows: 25
     TotalColumns: 12
     RowsToFill: 5
     CellSize: 1
     TotalItemsToLoad: 50
-    StartPosition: {x: -2.8, y: 0, z: 0}
+    StartPosition: {x: -2.8, y: 7.5, z: 0}
   BallData:
     MinSpeed: 1
     MaxSpeed: 3
