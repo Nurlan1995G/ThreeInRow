@@ -8,13 +8,12 @@ namespace Assets._project.CodeBase
         private Dictionary<TypeItem, List<Item>> _itemsByType;
         private List<Item> _items;
         private List<Item> _reserveItems;
-        
-        private Vector3 _startPosition;
+        private List<Item> _activaItems;
 
-        public ItemManagerModel(List<Item> items, Vector3 startPosition)
+        public ItemManagerModel(List<Item> items)
         {
             _items = items;
-            _startPosition = startPosition;
+            _activaItems = new List<Item>();
             _reserveItems = new List<Item>(); 
 
             PopulateItemByType();
@@ -33,6 +32,7 @@ namespace Assets._project.CodeBase
                 int randomIndex = Random.Range(0, _items.Count);
                 Item item = _items[randomIndex];
                 _items.RemoveAt(randomIndex);
+                _activaItems.Add(item);
                 return item;
             }
             else if (_reserveItems.Count > 0)
@@ -44,6 +44,36 @@ namespace Assets._project.CodeBase
             }
 
             return null;  
+        }
+
+        public List<Item> GetItemsOnSameY(Item clickedItem)
+        {
+            List<Item> itemsOnSameY = new List<Item>();
+
+            var mainPositionY = clickedItem.ItemPosition.y;
+
+            foreach (var item in _activaItems)
+            {
+                if (Mathf.Approximately(item.ItemPosition.y, mainPositionY))
+                    itemsOnSameY.Add(item);
+            }
+
+            return itemsOnSameY;
+        }
+
+        public List<Item> GetItemsOnSameX(Item clickedItem)
+        {
+            List<Item> itemsOnSameX = new List<Item>();
+
+            var mainPositionX = clickedItem.ItemPosition.x;
+
+            foreach (var item in _activaItems)
+            {
+                if (Mathf.Approximately(item.ItemPosition.x, mainPositionX))
+                    itemsOnSameX.Add(item);
+            }
+
+            return itemsOnSameX;
         }
 
         public List<Item> FilterMatchingItems(Item clickedItem, List<Item> items)

@@ -29,5 +29,4 @@ namespace Assets._project.CodeBase
             return new Vector3(xPos, yPos, _startPosition.z);
         }
     }
-
 }

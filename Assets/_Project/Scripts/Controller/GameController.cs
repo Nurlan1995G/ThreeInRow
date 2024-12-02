@@ -1,6 +1,7 @@
 ﻿using Assets._project.CodeBase;
 using Assets._project.Config;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets._Project.Scripts.Controller
@@ -24,9 +25,9 @@ namespace Assets._Project.Scripts.Controller
 
         private void Initialize()
         {
-            _itemManager = new ItemManagerModel(_items, _gameConfig.ManagerData.StartPosition);
+            _itemManager = new ItemManagerModel(_items);
             _gridManagerModel = new GridManagerModel(_itemManager, _gameConfig.ManagerData, _cells);
-            _playerModel = new PlayerModel(10, _gameView);
+            _playerModel = new PlayerModel(_gameConfig.PlayerData.StartCountScore, _gameView);
 
             _gameView.Initialize(_gameConfig.ManagerData);
             _gameView.InitializeGrid(_cells, _itemManager, _gameConfig.ManagerData.CellSize);
@@ -35,31 +36,86 @@ namespace Assets._Project.Scripts.Controller
 
         private void HandleItemClick(Item clickedItem)
         {
-            Debug.Log("HandleItemClick");
+            List<Item> connectedItemsY = GetConnectedItems(clickedItem, Direction.Vertical);
 
-            clickedItem.ActivateCollisionDetection();
-
-            // Подписываемся на событие для получения соприкосновений
-            clickedItem.OnCollisionDetected += items =>
+            if (connectedItemsY.Count >= 3)
             {
-                List<Item> matchingItems = _itemManager.FilterMatchingItems(clickedItem, items);
+                DeactivateItems(connectedItemsY);
+                return; 
+            }
 
-                if (matchingItems.Count >= 1) // Если есть хотя бы одно совпадение
+            List<Item> connectedItemsX = GetConnectedItems(clickedItem, Direction.Horizontal);
+
+            if (connectedItemsX.Count >= 3)
+                DeactivateItems(connectedItemsX);
+        }
+
+        private void HandleItemClicks(Item clickedItem)
+        {
+            List<Item> itemsOnSameY = _itemManager.GetItemsOnSameY(clickedItem);
+
+            List<Item> itemsOnSameX = _itemManager.GetItemsOnSameX(clickedItem);
+
+            List<Item> matchingItemsY = FilterNeighboringItems(clickedItem, itemsOnSameY);
+            List<Item> matchingItemsX = FilterNeighboringItems(clickedItem, itemsOnSameX);
+
+            if (matchingItemsY.Count > 0)
+                DeactivateItems(matchingItemsY);
+            
+            if (matchingItemsX.Count > 0)
+                DeactivateItems(matchingItemsX);
+        }
+
+        private List<Item> FilterNeighboringItems(Item clickedItem, List<Item> itemsOnSame)
+        {
+            List<Item> matchingItems = new List<Item>();
+
+            foreach (var item in itemsOnSame)
+            {
+                if (item.TypeItem == clickedItem.TypeItem)
                 {
-                    matchingItems.Add(clickedItem);
-                    DeactivateItems(matchingItems);
-                    _playerModel.UpdateScore(matchingItems.Count);
-
-                    Debug.Log($"Удалено {matchingItems.Count} предметов!");
+                    if (Vector3.Distance(item.ItemPosition, clickedItem.ItemPosition) <= _gameConfig.ManagerData.CellSize)
+                        matchingItems.Add(item);
                 }
-                else
-                {
-                    Debug.Log("Совпадений не найдено.");
-                }
+            }
 
-                clickedItem.DeactivateCollisionDetection(); // Отключаем проверку после обработки
-            };
-    }
+            if (matchingItems.Count < 3)
+                return new List<Item>(); 
+
+            return matchingItems;
+        }
+
+        private List<Item> GetConnectedItems(Item clickedItem, Direction direction, HashSet<Item> visitedItems = null)
+        {
+            if (visitedItems == null)
+                visitedItems = new HashSet<Item>();
+
+            if (visitedItems.Contains(clickedItem))
+                return new List<Item>();
+
+            visitedItems.Add(clickedItem);
+
+            List<Item> connectedItems = new List<Item> { clickedItem }; // Текущий предмет
+
+            // Получаем соседей только по указанному направлению
+            List<Item> neighbors = (direction == Direction.Vertical)
+                ? _itemManager.GetItemsOnSameY(clickedItem)
+                    .Where(item => !visitedItems.Contains(item) &&
+                                   Vector3.Distance(item.ItemPosition, clickedItem.ItemPosition) <= _gameConfig.ManagerData.CellSize &&
+                                   item.TypeItem == clickedItem.TypeItem).ToList()
+                : _itemManager.GetItemsOnSameX(clickedItem)
+                    .Where(item => !visitedItems.Contains(item) &&
+                                   Vector3.Distance(item.ItemPosition, clickedItem.ItemPosition) <= _gameConfig.ManagerData.CellSize &&
+                                   item.TypeItem == clickedItem.TypeItem).ToList();
+
+            // Рекурсивно добавляем соседей
+            foreach (var neighbor in neighbors)
+            {
+                connectedItems.AddRange(GetConnectedItems(neighbor, direction, visitedItems));
+            }
+
+            return connectedItems.Distinct().ToList(); // Убираем дубли
+        }
 
         private void DeactivateItems(List<Item> items)
         {
@@ -67,7 +123,14 @@ namespace Assets._Project.Scripts.Controller
             {
                 _itemManager.ReplaceItem(item);
                 _gameView.RemoveItem(item);
+                _playerModel.UpdateScore(1);
             }
         }
+    }
+
+    public enum Direction
+    {
+        Vertical,
+        Horizontal
     }
 }

@@ -37,7 +37,7 @@ namespace Assets._project.CodeBase
         public void RemoveItem(Item item)
         {
             item.Deactivate();
-            item.transform.position = _managerData.StartPosition;
+            item.SetPosition(_managerData.StartPosition);
         }
 
         public void UpdateScore(PlayerModel itemModel)
@@ -62,11 +62,6 @@ namespace Assets._project.CodeBase
                 }
             }
             return null;
-        }
-
-        public void ReturnItemToPool(Item item)
-        {
-            item.gameObject.SetActive(false);
         }
 
         private void ActivateAndPlaceItem(Item item, Point cell)
