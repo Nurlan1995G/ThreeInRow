@@ -5,32 +5,32 @@ namespace Assets._project.CodeBase
 {
     public class ItemManagerModel
     {
-        private Dictionary<TypeItem, List<Item>> _itemsByType;
-        private List<Item> _items;
-        private List<Item> _reserveItems;
-        private List<Item> _activaItems;
+        private Dictionary<TypeItem, List<ItemModel>> _itemsByType;
+        private List<ItemModel> _items;
+        private List<ItemModel> _reserveItems;
+        private List<ItemModel> _activaItems;
 
-        public ItemManagerModel(List<Item> items)
+        public ItemManagerModel(List<ItemModel> items)
         {
             _items = items;
-            _activaItems = new List<Item>();
-            _reserveItems = new List<Item>(); 
+            _activaItems = new List<ItemModel>();
+            _reserveItems = new List<ItemModel>(); 
 
             PopulateItemByType();
         }
 
-        public void ReplaceItem(Item oldItem)
+        public void ReplaceItem(ItemModel oldItem)
         {
             oldItem.RemoveFromCurrentPoint();
             AddAfterReset(oldItem);
         }
 
-        public Item GetRandomItem()
+        public ItemModel GetRandomItem()
         {
             if (_items.Count > 0)
             {
                 int randomIndex = Random.Range(0, _items.Count);
-                Item item = _items[randomIndex];
+                ItemModel item = _items[randomIndex];
                 _items.RemoveAt(randomIndex);
                 _activaItems.Add(item);
                 return item;
@@ -38,7 +38,7 @@ namespace Assets._project.CodeBase
             else if (_reserveItems.Count > 0)
             {
                 int randomIndex = Random.Range(0, _reserveItems.Count);
-                Item item = _reserveItems[randomIndex];
+                ItemModel item = _reserveItems[randomIndex];
                 _reserveItems.RemoveAt(randomIndex);
                 return item;
             }
@@ -46,45 +46,45 @@ namespace Assets._project.CodeBase
             return null;  
         }
 
-        public List<Item> GetItemsOnSameY(Item clickedItem)
+        public List<ItemModel> GetItemsOnSameY(ItemModel clickedItem)
         {
-            List<Item> itemsOnSameY = new List<Item>();
+            List<ItemModel> itemsOnSameY = new List<ItemModel>();
 
-            var mainPositionY = clickedItem.ItemPosition.y;
+            var mainPositionY = clickedItem.Position.y;
 
             foreach (var item in _activaItems)
             {
-                if (Mathf.Approximately(item.ItemPosition.y, mainPositionY))
+                if (Mathf.Approximately(item.Position.y, mainPositionY))
                     itemsOnSameY.Add(item);
             }
 
             return itemsOnSameY;
         }
 
-        public List<Item> GetItemsOnSameX(Item clickedItem)
+        public List<ItemModel> GetItemsOnSameX(ItemModel clickedItem)
         {
-            List<Item> itemsOnSameX = new List<Item>();
+            List<ItemModel> itemsOnSameX = new List<ItemModel>();
 
-            var mainPositionX = clickedItem.ItemPosition.x;
+            var mainPositionX = clickedItem.Position.x;
 
             foreach (var item in _activaItems)
             {
-                if (Mathf.Approximately(item.ItemPosition.x, mainPositionX))
+                if (Mathf.Approximately(item.Position.x, mainPositionX))
                     itemsOnSameX.Add(item);
             }
 
             return itemsOnSameX;
         }
 
-        public List<Item> OnItemsMatched()
+        public List<ItemModel> OnItemsMatched()
         {
-            foreach (var item in _activaItems)
+            foreach (ItemModel item in _activaItems)
                 item.RemoveFromCurrentPoint();
 
             return _activaItems;
         }
 
-        public void AddAfterReset(Item item)
+        public void AddAfterReset(ItemModel item)
         {
             if (!_items.Contains(item) && !_reserveItems.Contains(item))
                 _reserveItems.Add(item);  
@@ -92,14 +92,14 @@ namespace Assets._project.CodeBase
 
         private void PopulateItemByType()  //Заполнить тип предмета
         {
-            _itemsByType = new Dictionary<TypeItem, List<Item>>();
+            _itemsByType = new Dictionary<TypeItem, List<ItemModel>>();
 
-            foreach (Item ball in _items)
+            foreach (ItemModel item in _items)
             {
-                if (!_itemsByType.ContainsKey(ball.TypeItem))
-                    _itemsByType.Add(ball.TypeItem, new List<Item>());
+                if (!_itemsByType.ContainsKey(item.Item.TypeItem))
+                    _itemsByType.Add(item.Item.TypeItem, new List<ItemModel>());
 
-                _itemsByType[ball.TypeItem].Add(ball);
+                _itemsByType[item.Item.TypeItem].Add(item);
             }
         }
     }

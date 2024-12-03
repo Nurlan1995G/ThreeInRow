@@ -10,7 +10,7 @@ namespace Assets._project.CodeBase
         [SerializeField] private TextMeshProUGUI _scoreText;
         [SerializeField] private TextMeshProUGUI _gameOverText;
 
-        private List<Item> _itemsPool = new List<Item>();
+        private List<ItemModel> _itemsPool = new List<ItemModel>();
         private ManagerData _managerData;
 
         public void Initialize(ManagerData managerData)
@@ -25,7 +25,7 @@ namespace Assets._project.CodeBase
             {
                 if (!cell.IsBusy)
                 {
-                    Item item = itemManager.GetRandomItem();
+                    ItemModel item = itemManager.GetRandomItem();
 
                     if (item != null)
                         ActivateAndPlaceItem(item, cell);
@@ -33,7 +33,7 @@ namespace Assets._project.CodeBase
             }
         }
 
-        public void RemoveItem(Item item)
+        public void RemoveItem(ItemModel item)
         {
             item.Deactivate();
             item.SetPosition(_managerData.StartPosition);
@@ -50,7 +50,7 @@ namespace Assets._project.CodeBase
             _gameOverText.gameObject.SetActive(true);
         }
 
-        private void ActivateAndPlaceItem(Item item, Point cell)
+        private void ActivateAndPlaceItem(ItemModel item, Point cell)
         {
             Vector3 itemPosition = cell.GetPlaceItem(item);
 

@@ -8,7 +8,7 @@ namespace Assets._project.CodeBase
 
         public bool IsBusy => _isBusy;
 
-        public Vector3 GetPlaceItem(Item item)
+        public Vector3 GetPlaceItem(ItemModel item)
         {
             if (!_isBusy && item.GetCurrentPoint() == null)
             {

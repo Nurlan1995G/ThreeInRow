@@ -13,11 +13,13 @@ namespace Assets._Project.Scripts.Controller
         [SerializeField] private List<Point> _cells; 
         [SerializeField] private List<Item> _items;   
         [SerializeField] private GameView _gameView;
-        [SerializeField] private PlayerInput _playerInput;
+        [SerializeField] private PlayerInputHandler _playerInput;
 
         private ItemManagerModel _itemManager;
         private GridManagerModel _gridManagerModel;
         private PlayerModel _playerModel;
+        private List<ItemModel> _itemModels;
+        private ItemAnimatorModel _animatorModel;
 
         private void Start()
         {
@@ -26,7 +28,9 @@ namespace Assets._Project.Scripts.Controller
 
         private void Initialize()
         {
-            _itemManager = new ItemManagerModel(_items);
+            InitializeItemModels();
+
+            _itemManager = new ItemManagerModel(_itemModels);
             _gridManagerModel = new GridManagerModel(_itemManager, _gameConfig.ManagerData, _cells);
             _playerModel = new PlayerModel(_gameConfig.PlayerData.StartCountScore, _gameView);
 
@@ -35,16 +39,23 @@ namespace Assets._Project.Scripts.Controller
             _playerInput.OnItemClicked += HandleItemClick; 
         }
 
-        private void HandleItemClick(Item clickedItem)
+        private void InitializeItemModels()
         {
-            foreach (var item in _items)
+            _itemModels = new List<ItemModel>();
+
+            foreach (Item item in _items)
             {
                 ItemModel itemModel = new ItemModel(item);
+                item.Initialize(itemModel);
+                _itemModels.Add(itemModel);
             }
+        }
 
+        private void HandleItemClick(ItemModel clickedItem)
+        {
             _playerModel.SubstractScore(_gameConfig.LogicData.SubstractScore);
 
-            List<Item> connectedItemsY = GetConnectedItems(clickedItem, Direction.Vertical);
+            List<ItemModel> connectedItemsY = GetConnectedItems(clickedItem, Direction.Vertical);
 
             if (connectedItemsY.Count >= 3)
             {
@@ -52,33 +63,33 @@ namespace Assets._Project.Scripts.Controller
                 return; 
             }
 
-            List<Item> connectedItemsX = GetConnectedItems(clickedItem, Direction.Horizontal);
+            List<ItemModel> connectedItemsX = GetConnectedItems(clickedItem, Direction.Horizontal);
 
             if (connectedItemsX.Count >= 3)
                 DeactivateItems(connectedItemsX);
         }
 
-        private List<Item> GetConnectedItems(Item clickedItem, Direction direction, HashSet<Item> visitedItems = null)
+        private List<ItemModel> GetConnectedItems(ItemModel clickedItem, Direction direction, HashSet<ItemModel> visitedItems = null)
         {
             if (visitedItems == null)
-                visitedItems = new HashSet<Item>();
+                visitedItems = new HashSet<ItemModel>();
 
             if (visitedItems.Contains(clickedItem))
-                return new List<Item>();
+                return new List<ItemModel>();
 
             visitedItems.Add(clickedItem);
 
-            List<Item> connectedItems = new List<Item> { clickedItem };
+            List<ItemModel> connectedItems = new List<ItemModel> { clickedItem };
 
-            List<Item> neighbors = (direction == Direction.Vertical)
+            List<ItemModel> neighbors = (direction == Direction.Vertical)
                 ? _itemManager.GetItemsOnSameY(clickedItem)
-                    .Where(item => !visitedItems.Contains(item) &&
-                                   Vector3.Distance(item.ItemPosition, clickedItem.ItemPosition) <= _gameConfig.ManagerData.CellSize &&
-                                   item.TypeItem == clickedItem.TypeItem).ToList()
+                    .Where(itemModel => !visitedItems.Contains(itemModel) &&
+                                   Vector3.Distance(itemModel.Position, clickedItem.Position) <= _gameConfig.ManagerData.CellSize &&
+                                   itemModel.Item.TypeItem == clickedItem.Item.TypeItem).ToList()
                 : _itemManager.GetItemsOnSameX(clickedItem)
                     .Where(item => !visitedItems.Contains(item) &&
-                                   Vector3.Distance(item.ItemPosition, clickedItem.ItemPosition) <= _gameConfig.ManagerData.CellSize &&
-                                   item.TypeItem == clickedItem.TypeItem).ToList();
+                                   Vector3.Distance(item.Position, clickedItem.Position) <= _gameConfig.ManagerData.CellSize &&
+                                   item.Item.TypeItem == clickedItem.Item.TypeItem).ToList();
 
             foreach (var neighbor in neighbors)
                 connectedItems.AddRange(GetConnectedItems(neighbor, direction, visitedItems));
@@ -86,37 +97,31 @@ namespace Assets._Project.Scripts.Controller
             return connectedItems.Distinct().ToList();
         }
 
-        private void DeactivateItems(List<Item> items)
+        private void DeactivateItems(List<ItemModel> items)
         {
             foreach (var item in items)
             {
-                _itemManager.ReplaceItem(item);
-                _gameView.RemoveItem(item);
-                _playerModel.UpdateScore(_gameConfig.LogicData.Reward);
+                StartCoroutine(DeactivateItemWithAnimation(item));
             }
 
             var getAllItems = _itemManager.OnItemsMatched();
             StartCoroutine(HandleFallingItems(getAllItems));
         }
 
-        private IEnumerator HandleFallingItems(List<Item> getAllItems)
+        private IEnumerator HandleFallingItems(List<ItemModel> getAllItems)
         {
-            // Сброс ограничений для всех объектов
             foreach (var item in getAllItems)
-            {
-                item.Rigidbody2D.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
-            }
+                item.Item.Rigidbody2D.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
 
             yield return new WaitForSeconds(_gameConfig.LogicData.DropDuration);
 
-            // Оптимизация поиска ближайших ячеек
-            var freeCells = _gridManagerModel.GetFreeCells();
+            List<Point> freeCells = _gridManagerModel.GetFreeCells();
 
             foreach (var item in getAllItems)
             {
-                item.Rigidbody2D.constraints |= RigidbodyConstraints2D.FreezePositionY;
+                item.Item.Rigidbody2D.constraints |= RigidbodyConstraints2D.FreezePositionY;
 
-                Point nearestCell = _gridManagerModel.FindNearestFreeCell(item.transform.position, freeCells);
+                Point nearestCell = _gridManagerModel.FindNearestFreeCell(item.Position, freeCells);
 
                 if (nearestCell != null)
                 {
@@ -126,6 +131,19 @@ namespace Assets._Project.Scripts.Controller
                 }
             }
         }
+
+        private IEnumerator DeactivateItemWithAnimation(ItemModel item)
+        {
+            ItemAnimatorModel animatorModel = new ItemAnimatorModel(item);
+
+            yield return animatorModel.AnimateShrink(_gameConfig.LogicData.ShrinkDuration, () =>
+            {
+                _itemManager.ReplaceItem(item);
+                _gameView.RemoveItem(item);
+                _playerModel.UpdateScore(_gameConfig.LogicData.Reward);
+            });
+        }
+
     }
 
     public enum Direction

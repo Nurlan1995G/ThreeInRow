@@ -99,6 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b198f727342c77244a6bb0bb4f09d08c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gameConfig: {fileID: 11400000, guid: 614f15b5a17f7ca489241a404d6d155d, type: 2}
   <TypeItem>k__BackingField: 0
   <Rigidbody2D>k__BackingField: {fileID: 1874085487691555381}
 --- !u!50 &1874085487691555381

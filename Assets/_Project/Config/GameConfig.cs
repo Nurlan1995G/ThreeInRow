@@ -31,8 +31,10 @@ namespace Assets._project.Config
     [Serializable]
     public class LogicData
     {
+        public Vector3 SizeItem = new Vector3(0.4f, 0.4f, 0.4f);
         public int SubstractScore = 3;
         public int Reward = 1;
         public float DropDuration = 1f;
+        public float ShrinkDuration = 0.5f;
     }
 }
