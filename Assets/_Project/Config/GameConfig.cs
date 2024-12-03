@@ -31,6 +31,8 @@ namespace Assets._project.Config
     [Serializable]
     public class LogicData
     {
-        public int RewardToPlayer = 10;
+        public int SubstractScore = 3;
+        public int Reward = 1;
+        public float DropDuration = 1f;
     }
 }

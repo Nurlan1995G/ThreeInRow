@@ -22,6 +22,41 @@ namespace Assets._project.CodeBase
             FindCells();
         }
 
+        public Point FindNearestFreeCell(Vector3 position, List<Point> freeCells)
+        {
+            float minDistance = float.MaxValue;
+            Point nearestCell = null;
+
+            foreach (var cell in freeCells)
+            {
+                float distance = Vector3.SqrMagnitude(position - cell.transform.position);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearestCell = cell;
+                }
+            }
+
+            return nearestCell;
+        }
+
+        public List<Point> GetFreeCells()
+        {
+            List<Point> freeCells = new List<Point>();
+
+            foreach (var cell in _cells)
+            {
+                if (!cell.IsBusy)
+                {
+                    freeCells.Add(cell);
+                }
+            }
+
+            return freeCells;
+        }
+
+
+
         private void FindCells()
         {
             int index = 0;

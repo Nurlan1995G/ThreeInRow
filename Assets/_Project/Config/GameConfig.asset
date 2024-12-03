@@ -22,4 +22,6 @@ MonoBehaviour:
   PlayerData:
     StartCountScore: 10
   LogicData:
-    RewardToPlayer: 10
+    SubstractScore: 3
+    Reward: 1
+    DropDuration: 1

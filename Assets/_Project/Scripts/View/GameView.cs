@@ -1,5 +1,4 @@
 ﻿using Assets._project.Config;
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -20,7 +19,7 @@ namespace Assets._project.CodeBase
         }
 
         /// Расставляет предметы на указанных ячейках
-        public void InitializeGrid(List<Point> cells, ItemManagerModel itemManager, float cellSize)
+        public void InitializeGrid(List<Point> cells, ItemManagerModel itemManager)
         {
             foreach (var cell in cells)
             {
@@ -40,28 +39,15 @@ namespace Assets._project.CodeBase
             item.SetPosition(_managerData.StartPosition);
         }
 
-        public void UpdateScore(PlayerModel itemModel)
+        public void UpdateScore(int score)
         {
-            _scoreText.text = $"Score: {itemModel.Score}";
+            _scoreText.text = $"Score: {score}";
         }
 
         public void ShowGameOver(int finalScore)
         {
             _gameOverText.text = $"Game Over! Final Score: {finalScore}";
             _gameOverText.gameObject.SetActive(true);
-        }
-
-        public Item GetItemFromPool()
-        {
-            foreach (var item in _itemsPool)
-            {
-                if (!item.gameObject.activeSelf)
-                {
-                    item.Activate();
-                    return item;
-                }
-            }
-            return null;
         }
 
         private void ActivateAndPlaceItem(Item item, Point cell)
@@ -73,15 +59,6 @@ namespace Assets._project.CodeBase
             item.SetPosition(itemPosition);
             cell.MarkAsBusy();
             _itemsPool.Add(item);
-        }
-
-        public void RemoveItems(List<Item> matchingItems)
-        {
-            foreach (var item in matchingItems)
-            {
-                item.Deactivate();
-                item.transform.position = _managerData.StartPosition;
-            }
         }
 
         /* public void FillGridWithItems()  //Заполните Сетку Элементами

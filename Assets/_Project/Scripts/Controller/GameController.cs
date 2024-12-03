@@ -1,5 +1,6 @@
 ﻿using Assets._project.CodeBase;
 using Assets._project.Config;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -9,8 +10,8 @@ namespace Assets._Project.Scripts.Controller
     public class GameController : MonoBehaviour
     {
         [SerializeField] private GameConfig _gameConfig;
-        [SerializeField] private List<Point> _cells; // Загружаются с уровня
-        [SerializeField] private List<Item> _items;   // Загружаются с уровня
+        [SerializeField] private List<Point> _cells; 
+        [SerializeField] private List<Item> _items;   
         [SerializeField] private GameView _gameView;
         [SerializeField] private PlayerInput _playerInput;
 
@@ -30,12 +31,19 @@ namespace Assets._Project.Scripts.Controller
             _playerModel = new PlayerModel(_gameConfig.PlayerData.StartCountScore, _gameView);
 
             _gameView.Initialize(_gameConfig.ManagerData);
-            _gameView.InitializeGrid(_cells, _itemManager, _gameConfig.ManagerData.CellSize);
+            _gameView.InitializeGrid(_cells, _itemManager);
             _playerInput.OnItemClicked += HandleItemClick; 
         }
 
         private void HandleItemClick(Item clickedItem)
         {
+            foreach (var item in _items)
+            {
+                ItemModel itemModel = new ItemModel(item);
+            }
+
+            _playerModel.SubstractScore(_gameConfig.LogicData.SubstractScore);
+
             List<Item> connectedItemsY = GetConnectedItems(clickedItem, Direction.Vertical);
 
             if (connectedItemsY.Count >= 3)
@@ -50,41 +58,6 @@ namespace Assets._Project.Scripts.Controller
                 DeactivateItems(connectedItemsX);
         }
 
-        private void HandleItemClicks(Item clickedItem)
-        {
-            List<Item> itemsOnSameY = _itemManager.GetItemsOnSameY(clickedItem);
-
-            List<Item> itemsOnSameX = _itemManager.GetItemsOnSameX(clickedItem);
-
-            List<Item> matchingItemsY = FilterNeighboringItems(clickedItem, itemsOnSameY);
-            List<Item> matchingItemsX = FilterNeighboringItems(clickedItem, itemsOnSameX);
-
-            if (matchingItemsY.Count > 0)
-                DeactivateItems(matchingItemsY);
-            
-            if (matchingItemsX.Count > 0)
-                DeactivateItems(matchingItemsX);
-        }
-
-        private List<Item> FilterNeighboringItems(Item clickedItem, List<Item> itemsOnSame)
-        {
-            List<Item> matchingItems = new List<Item>();
-
-            foreach (var item in itemsOnSame)
-            {
-                if (item.TypeItem == clickedItem.TypeItem)
-                {
-                    if (Vector3.Distance(item.ItemPosition, clickedItem.ItemPosition) <= _gameConfig.ManagerData.CellSize)
-                        matchingItems.Add(item);
-                }
-            }
-
-            if (matchingItems.Count < 3)
-                return new List<Item>(); 
-
-            return matchingItems;
-        }
-
         private List<Item> GetConnectedItems(Item clickedItem, Direction direction, HashSet<Item> visitedItems = null)
         {
             if (visitedItems == null)
@@ -95,9 +68,8 @@ namespace Assets._Project.Scripts.Controller
 
             visitedItems.Add(clickedItem);
 
-            List<Item> connectedItems = new List<Item> { clickedItem }; // Текущий предмет
+            List<Item> connectedItems = new List<Item> { clickedItem };
 
-            // Получаем соседей только по указанному направлению
             List<Item> neighbors = (direction == Direction.Vertical)
                 ? _itemManager.GetItemsOnSameY(clickedItem)
                     .Where(item => !visitedItems.Contains(item) &&
@@ -108,13 +80,10 @@ namespace Assets._Project.Scripts.Controller
                                    Vector3.Distance(item.ItemPosition, clickedItem.ItemPosition) <= _gameConfig.ManagerData.CellSize &&
                                    item.TypeItem == clickedItem.TypeItem).ToList();
 
-            // Рекурсивно добавляем соседей
             foreach (var neighbor in neighbors)
-            {
                 connectedItems.AddRange(GetConnectedItems(neighbor, direction, visitedItems));
-            }
 
-            return connectedItems.Distinct().ToList(); // Убираем дубли
+            return connectedItems.Distinct().ToList();
         }
 
         private void DeactivateItems(List<Item> items)
@@ -123,7 +92,38 @@ namespace Assets._Project.Scripts.Controller
             {
                 _itemManager.ReplaceItem(item);
                 _gameView.RemoveItem(item);
-                _playerModel.UpdateScore(1);
+                _playerModel.UpdateScore(_gameConfig.LogicData.Reward);
+            }
+
+            var getAllItems = _itemManager.OnItemsMatched();
+            StartCoroutine(HandleFallingItems(getAllItems));
+        }
+
+        private IEnumerator HandleFallingItems(List<Item> getAllItems)
+        {
+            // Сброс ограничений для всех объектов
+            foreach (var item in getAllItems)
+            {
+                item.Rigidbody2D.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
+            }
+
+            yield return new WaitForSeconds(_gameConfig.LogicData.DropDuration);
+
+            // Оптимизация поиска ближайших ячеек
+            var freeCells = _gridManagerModel.GetFreeCells();
+
+            foreach (var item in getAllItems)
+            {
+                item.Rigidbody2D.constraints |= RigidbodyConstraints2D.FreezePositionY;
+
+                Point nearestCell = _gridManagerModel.FindNearestFreeCell(item.transform.position, freeCells);
+
+                if (nearestCell != null)
+                {
+                    item.SetCurrentPoint(nearestCell);
+                    item.SetPosition(nearestCell.transform.position);
+                    nearestCell.MarkAsBusy();
+                }
             }
         }
     }

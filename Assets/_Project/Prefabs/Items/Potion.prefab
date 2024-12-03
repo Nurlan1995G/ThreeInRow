@@ -100,6 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <TypeItem>k__BackingField: 2
+  <Rigidbody2D>k__BackingField: {fileID: 3602462461043123725}
 --- !u!50 &3602462461043123725
 Rigidbody2D:
   serializedVersion: 4

@@ -76,22 +76,12 @@ namespace Assets._project.CodeBase
             return itemsOnSameX;
         }
 
-        public List<Item> FilterMatchingItems(Item clickedItem, List<Item> items)
+        public List<Item> OnItemsMatched()
         {
-            Debug.Log("FilterMatchingItems");
+            foreach (var item in _activaItems)
+                item.RemoveFromCurrentPoint();
 
-            List<Item> matchingItems = new List<Item>();
-
-            foreach (var item in items)
-            {
-                if (item.TypeItem == clickedItem.TypeItem)
-                {
-                    Debug.Log("типы совпали");
-                    matchingItems.Add(item);
-                }
-            }
-
-            return matchingItems;
+            return _activaItems;
         }
 
         public void AddAfterReset(Item item)

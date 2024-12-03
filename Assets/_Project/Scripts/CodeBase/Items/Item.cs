@@ -8,6 +8,7 @@ namespace Assets._project.CodeBase
 
         public Vector3 ItemPosition => transform.position;
         [field: SerializeField] public TypeItem TypeItem { get; private set; }
+        [field: SerializeField] public Rigidbody2D Rigidbody2D { get; private set; }
 
         public void SetPosition(Vector3 position) =>
         transform.position = position;
