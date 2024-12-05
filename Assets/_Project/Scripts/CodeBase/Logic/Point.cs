@@ -13,6 +13,7 @@ namespace Assets._project.CodeBase
             if (!_isBusy && item.GetCurrentPoint() == null)
             {
                 _isBusy = true;
+                item.SetCurrentPoint(this);
                 return transform.position;
             }
 
@@ -22,7 +23,7 @@ namespace Assets._project.CodeBase
         public void MarkAsBusy() => 
             _isBusy = true;
 
-        public void FreeCell() => 
+        public void MarkAsFree() => 
             _isBusy = false;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets._project.CodeBase
@@ -81,13 +82,27 @@ namespace Assets._project.CodeBase
             foreach (ItemModel item in _activaItems)
                 item.RemoveFromCurrentPoint();
 
+            Debug.Log(_activaItems.Count + "activate - OnItemsMatched");
+
             return _activaItems;
         }
 
-        public void AddAfterReset(ItemModel item)
+        public List<ItemModel> GetAllItems()
+        {
+            return _activaItems.Where(item => item.Item.gameObject.activeSelf).ToList();
+        }
+
+        private void AddAfterReset(ItemModel item)
         {
             if (!_items.Contains(item) && !_reserveItems.Contains(item))
-                _reserveItems.Add(item);  
+            {
+                Debug.Log(_reserveItems.Count + " - reserve");
+                _reserveItems.Add(item);
+                Debug.Log(_reserveItems.Count + " - reserve");
+                Debug.Log(_activaItems.Count + " - activateItems");
+                _activaItems.Remove(item);
+                Debug.Log(_activaItems.Count + " - activateItems");
+            }
         }
 
         private void PopulateItemByType()  //Заполнить тип предмета

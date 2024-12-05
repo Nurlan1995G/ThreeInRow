@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
 using UnityEngine;
 
 namespace Assets._project.CodeBase
@@ -7,26 +7,14 @@ namespace Assets._project.CodeBase
     {
         private ItemModel _item;
 
-        public ItemAnimatorModel(ItemModel item) => 
+        public ItemAnimatorModel(ItemModel item) =>
             _item = item;
 
-        public IEnumerator AnimateShrink(float duration, System.Action onComplete = null)
+        public void AnimateShrink(float duration, System.Action onComplete = null)
         {
-            Vector3 initialScale = _item.Item.transform.localScale;
-            Vector3 targetScale = Vector3.zero;
-
-            float elapsedTime = 0f;
-
-            while (elapsedTime < duration)
-            {
-                elapsedTime += Time.deltaTime;
-                float t = elapsedTime / duration;
-                _item.Item.transform.localScale = Vector3.Lerp(initialScale, targetScale, t);
-                yield return null;
-            }
-
-            _item.Item.transform.localScale = targetScale;
-            onComplete?.Invoke(); 
+            _item.Item.transform.DOScale(Vector3.zero, duration)
+                .SetEase(Ease.Linear) 
+                .OnComplete(() => onComplete?.Invoke());
         }
     }
 }

@@ -17,8 +17,10 @@ namespace Assets._project.CodeBase
         public void SetPosition(Vector3 position) => 
             _item.transform.position = position;
 
-        public void SetCurrentPoint(Point point) => 
+        public void SetCurrentPoint(Point point)
+        {
             _currentPoint = point;
+        }
 
         public Point GetCurrentPoint() =>
             _currentPoint;
@@ -31,8 +33,11 @@ namespace Assets._project.CodeBase
 
         public void RemoveFromCurrentPoint()
         {
-            _currentPoint?.FreeCell();
-            _currentPoint = null;
+            if (_currentPoint != null)
+            {
+                _currentPoint.MarkAsFree();
+                _currentPoint = null;
+            }
         }
     }
 }

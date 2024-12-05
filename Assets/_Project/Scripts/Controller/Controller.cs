@@ -1,10 +1,32 @@
-﻿using System;
+﻿using Assets._project.CodeBase;
+using Assets._project.Config;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Assets._project.CodeBase
+namespace Assets._Project.Scripts.Controller
 {
-    public class PlayerInputHandler : MonoBehaviour
+    public abstract class Controller : MonoBehaviour
+    {
+        [SerializeField] private GameConfig _gameConfig;
+        [SerializeField] private List<Point> _cells;
+        [SerializeField] private List<Item> _items;
+        [SerializeField] private GameView _gameView;
+        [SerializeField] private PlayerInputHandler _playerInput;
+
+        private ItemManagerModel _itemManager;
+        private GridManagerModel _gridManagerModel;
+        private PlayerModel _playerModel;
+        private List<ItemModel> _itemModels;
+    }
+
+    public class AnimatorController : Controller
+    {
+        private ItemAnimatorModel _animatorModel;
+    }
+
+    public class PlayerInputController : Controller
     {
         private PlayerInput _playerInput;
         private Camera _mainCamera;
@@ -19,7 +41,7 @@ namespace Assets._project.CodeBase
             _playerInput.Clicked.MouseTap.performed += OnClick;
         }
 
-        private void OnEnable() => 
+        private void OnEnable() =>
             _playerInput.Enable();
 
         private void OnDisable()
@@ -38,7 +60,7 @@ namespace Assets._project.CodeBase
             Collider2D hit = Physics2D.OverlapPoint(mousePosition);
 
             if (hit != null && hit.TryGetComponent(out Item item))
-                OnItemClicked?.Invoke(item.ItemModel); 
+                OnItemClicked?.Invoke(item.ItemModel);
         }
     }
 }

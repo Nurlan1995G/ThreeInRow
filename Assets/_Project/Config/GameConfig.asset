@@ -25,3 +25,4 @@ MonoBehaviour:
     SubstractScore: 3
     Reward: 1
     DropDuration: 1
+    ShrinkDuration: 0.5

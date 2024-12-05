@@ -36,6 +36,7 @@ namespace Assets._project.CodeBase
         public void RemoveItem(ItemModel item)
         {
             item.Deactivate();
+            _itemsPool.Remove(item);
             item.SetPosition(_managerData.StartPosition);
         }
 
@@ -55,7 +56,6 @@ namespace Assets._project.CodeBase
             Vector3 itemPosition = cell.GetPlaceItem(item);
 
             item.Activate();
-            item.SetCurrentPoint(cell);
             item.SetPosition(itemPosition);
             cell.MarkAsBusy();
             _itemsPool.Add(item);

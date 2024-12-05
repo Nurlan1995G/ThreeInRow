@@ -29,7 +29,11 @@ namespace Assets._project.CodeBase
 
             foreach (var cell in freeCells)
             {
+                if (cell.IsBusy) 
+                    continue;
+
                 float distance = Vector3.SqrMagnitude(position - cell.transform.position);
+
                 if (distance < minDistance)
                 {
                     minDistance = distance;
@@ -49,8 +53,11 @@ namespace Assets._project.CodeBase
                 if (!cell.IsBusy)
                 {
                     freeCells.Add(cell);
+                    Debug.Log("Free cell");
                 }
             }
+
+            Debug.Log("GetFreeCells");
 
             return freeCells;
         }

@@ -7,11 +7,11 @@ using UnityEngine;
 
 namespace Assets._Project.Scripts.Controller
 {
-    public class GameController : MonoBehaviour
+    public class GameController : Controller
     {
         [SerializeField] private GameConfig _gameConfig;
-        [SerializeField] private List<Point> _cells; 
-        [SerializeField] private List<Item> _items;   
+        [SerializeField] private List<Point> _cells;
+        [SerializeField] private List<Item> _items;
         [SerializeField] private GameView _gameView;
         [SerializeField] private PlayerInputHandler _playerInput;
 
@@ -36,7 +36,7 @@ namespace Assets._Project.Scripts.Controller
 
             _gameView.Initialize(_gameConfig.ManagerData);
             _gameView.InitializeGrid(_cells, _itemManager);
-            _playerInput.OnItemClicked += HandleItemClick; 
+            _playerInput.OnItemClicked += HandleItemClick;
         }
 
         private void InitializeItemModels()
@@ -59,14 +59,18 @@ namespace Assets._Project.Scripts.Controller
 
             if (connectedItemsY.Count >= 3)
             {
+                Debug.Log("connectedItemsY.Count >= 3");
                 DeactivateItems(connectedItemsY);
-                return; 
+                return;
             }
 
             List<ItemModel> connectedItemsX = GetConnectedItems(clickedItem, Direction.Horizontal);
 
             if (connectedItemsX.Count >= 3)
+            {
+                Debug.Log("connectedItemsX.Count >= 3");
                 DeactivateItems(connectedItemsX);
+            }
         }
 
         private List<ItemModel> GetConnectedItems(ItemModel clickedItem, Direction direction, HashSet<ItemModel> visitedItems = null)
@@ -100,24 +104,30 @@ namespace Assets._Project.Scripts.Controller
         private void DeactivateItems(List<ItemModel> items)
         {
             foreach (var item in items)
-            {
-                StartCoroutine(DeactivateItemWithAnimation(item));
-            }
+                DeactivateItemWithAnimation(item);
 
-            var getAllItems = _itemManager.OnItemsMatched();
+            List<ItemModel> getAllItems = _itemManager.OnItemsMatched();
             StartCoroutine(HandleFallingItems(getAllItems));
         }
 
-        private IEnumerator HandleFallingItems(List<ItemModel> getAllItems)
+        private IEnumerator HandleFallingItems(List<ItemModel> matchedItems)
         {
-            foreach (var item in getAllItems)
+            float minY = matchedItems.Min(item => item.Position.y);
+
+            List<ItemModel> itemsAbove = _itemManager.GetAllItems()
+                .Where(item => item.Position.y > minY)
+                .ToList();
+
+            foreach (ItemModel item in itemsAbove)
                 item.Item.Rigidbody2D.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
 
             yield return new WaitForSeconds(_gameConfig.LogicData.DropDuration);
 
             List<Point> freeCells = _gridManagerModel.GetFreeCells();
 
-            foreach (var item in getAllItems)
+            Debug.Log(freeCells.Count + " - freeCells.Count");
+
+            foreach (var item in itemsAbove)
             {
                 item.Item.Rigidbody2D.constraints |= RigidbodyConstraints2D.FreezePositionY;
 
@@ -125,6 +135,7 @@ namespace Assets._Project.Scripts.Controller
 
                 if (nearestCell != null)
                 {
+                    item.RemoveFromCurrentPoint(); 
                     item.SetCurrentPoint(nearestCell);
                     item.SetPosition(nearestCell.transform.position);
                     nearestCell.MarkAsBusy();
@@ -132,11 +143,11 @@ namespace Assets._Project.Scripts.Controller
             }
         }
 
-        private IEnumerator DeactivateItemWithAnimation(ItemModel item)
+        private void DeactivateItemWithAnimation(ItemModel item)
         {
             ItemAnimatorModel animatorModel = new ItemAnimatorModel(item);
 
-            yield return animatorModel.AnimateShrink(_gameConfig.LogicData.ShrinkDuration, () =>
+            animatorModel.AnimateShrink(_gameConfig.LogicData.ShrinkDuration, () =>
             {
                 _itemManager.ReplaceItem(item);
                 _gameView.RemoveItem(item);
@@ -144,11 +155,10 @@ namespace Assets._Project.Scripts.Controller
             });
         }
 
-    }
-
-    public enum Direction
-    {
-        Vertical,
-        Horizontal
+        public enum Direction
+        {
+            Vertical,
+            Horizontal
+        }
     }
 }
