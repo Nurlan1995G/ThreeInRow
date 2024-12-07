@@ -19,7 +19,6 @@ namespace Assets._Project.Scripts.Controller
         private GridManagerModel _gridManagerModel;
         private PlayerModel _playerModel;
         private List<ItemModel> _itemModels;
-        private ItemAnimatorModel _animatorModel;
 
         private void Start()
         {
@@ -55,20 +54,18 @@ namespace Assets._Project.Scripts.Controller
         {
             _playerModel.SubstractScore(_gameConfig.LogicData.SubstractScore);
 
-            var (row, column) = clickedItem.GetCurrentPointData();
-
             List<ItemModel> connectedItemsY = GetConnectedItems(clickedItem, Direction.Vertical);
 
             if (connectedItemsY.Count >= 3)
             {
-                DeactivateItems(connectedItemsY, row, column); 
+                DeactivateItems(connectedItemsY);
                 return;
             }
 
             List<ItemModel> connectedItemsX = GetConnectedItems(clickedItem, Direction.Horizontal);
 
             if (connectedItemsX.Count >= 3)
-                DeactivateItems(connectedItemsX, row, column); 
+                DeactivateItems(connectedItemsX);
         }
 
 
@@ -86,12 +83,12 @@ namespace Assets._Project.Scripts.Controller
 
             List<ItemModel> neighbors = (direction == Direction.Vertical)
                 ? _itemManager.GetItemsOnSameY(clickedItem)
-                    .Where(itemModel => !visitedItems.Contains(itemModel) &&
-                                   Vector3.Distance(itemModel.Position, clickedItem.Position) <= _gameConfig.ManagerData.CellSize &&
-                                   itemModel.Item.TypeItem == clickedItem.Item.TypeItem).ToList()
+                    .Where(item => !visitedItems.Contains(item) &&
+                                   Vector3.Distance(item.ItemPosition, clickedItem.ItemPosition) <= _gameConfig.ManagerData.CellSize &&
+                                   item.Item.TypeItem == clickedItem.Item.TypeItem).ToList()
                 : _itemManager.GetItemsOnSameX(clickedItem)
                     .Where(item => !visitedItems.Contains(item) &&
-                                   Vector3.Distance(item.Position, clickedItem.Position) <= _gameConfig.ManagerData.CellSize &&
+                                   Vector3.Distance(item.ItemPosition, clickedItem.ItemPosition) <= _gameConfig.ManagerData.CellSize &&
                                    item.Item.TypeItem == clickedItem.Item.TypeItem).ToList();
 
             foreach (var neighbor in neighbors)
@@ -100,86 +97,51 @@ namespace Assets._Project.Scripts.Controller
             return connectedItems.Distinct().ToList();
         }
 
-        private void DeactivateItems(List<ItemModel> items, int row, int column)
+        private void DeactivateItems(List<ItemModel> items)
         {
-            foreach (var item in items)
-                DeactivateItemWithAnimation(item);
+            foreach (ItemModel item in items)
+            {
+                _itemManager.ReplaceItem(item);
+                _gameView.RemoveItem(item);
+                _playerModel.UpdateScore(_gameConfig.LogicData.Reward);
+            }
 
-            MoveItemsInColumn(row, column);
-
-            List<ItemModel> getAllItems = _itemManager.OnItemsMatched();
+            var getAllItems = _itemManager.OnItemsMatched();
             StartCoroutine(HandleFallingItems(getAllItems));
         }
 
-        private void MoveItemsInColumn(int row, int column)
+        private IEnumerator HandleFallingItems(List<ItemModel> getAllItems)
         {
-            var itemsInColumn = _itemManager.GetAllItems()
-                .Where(item => item.GetCurrentPoint() != null && item.GetCurrentPoint().GetInfoPositionPoint().column == column)
-                .OrderBy(item => item.GetCurrentPoint().GetInfoPositionPoint().row)
-                .ToList();
-
-            for (int i = 0; i < itemsInColumn.Count - 1; i++)
+            // Сброс ограничений для всех объектов
+            foreach (var item in getAllItems)
             {
-                var currentItem = itemsInColumn[i];
-                var nextItem = itemsInColumn[i + 1];
-
-                currentItem.SetPosition(nextItem.Position);
-                currentItem.SetCurrentPoint(nextItem.GetCurrentPoint());
-
-                nextItem.RemoveFromCurrentPoint();
-            }
-
-            var lastItem = itemsInColumn.Last();
-            lastItem.RemoveFromCurrentPoint();
-        }
-
-        private IEnumerator HandleFallingItems(List<ItemModel> matchedItems)
-        {
-            float minY = matchedItems.Min(item => item.Position.y);
-
-            List<ItemModel> itemsAbove = _itemManager.GetAllItems()
-                .Where(item => item.Position.y > minY)
-                .ToList();
-
-            foreach (ItemModel item in itemsAbove)
                 item.Item.Rigidbody2D.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
+            }
 
             yield return new WaitForSeconds(_gameConfig.LogicData.DropDuration);
 
-            List<Point> freeCells = _gridManagerModel.GetFreeCells();
+            // Оптимизация поиска ближайших ячеек
+            var freeCells = _gridManagerModel.GetFreeCells();
 
-            foreach (var item in itemsAbove)
+            foreach (var item in getAllItems)
             {
                 item.Item.Rigidbody2D.constraints |= RigidbodyConstraints2D.FreezePositionY;
 
-                Point nearestCell = _gridManagerModel.FindNearestFreeCell(item.Position, freeCells);
+                Point nearestCell = _gridManagerModel.FindNearestFreeCell(item.ItemPosition, freeCells);
 
                 if (nearestCell != null)
                 {
-                    item.RemoveFromCurrentPoint();
                     item.SetCurrentPoint(nearestCell);
                     item.SetPosition(nearestCell.transform.position);
                     nearestCell.MarkAsBusy();
                 }
             }
         }
+    }
 
-        private void DeactivateItemWithAnimation(ItemModel item)
-        {
-            ItemAnimatorModel animatorModel = new ItemAnimatorModel(item);
-
-            animatorModel.AnimateShrink(_gameConfig.LogicData.ShrinkDuration, () =>
-            {
-                _itemManager.ReplaceItem(item);
-                _gameView.RemoveItem(item);
-                _playerModel.UpdateScore(_gameConfig.LogicData.Reward);
-            });
-        }
-
-        public enum Direction
-        {
-            Vertical,
-            Horizontal
-        }
+    public enum Direction
+    {
+        Vertical,
+        Horizontal
     }
 }

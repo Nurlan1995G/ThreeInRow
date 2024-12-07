@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Assets._project.CodeBase
@@ -15,7 +14,7 @@ namespace Assets._project.CodeBase
         {
             _items = items;
             _activaItems = new List<ItemModel>();
-            _reserveItems = new List<ItemModel>(); 
+            _reserveItems = new List<ItemModel>();
 
             PopulateItemByType();
         }
@@ -44,18 +43,18 @@ namespace Assets._project.CodeBase
                 return item;
             }
 
-            return null;  
+            return null;
         }
 
         public List<ItemModel> GetItemsOnSameY(ItemModel clickedItem)
         {
             List<ItemModel> itemsOnSameY = new List<ItemModel>();
 
-            var mainPositionY = clickedItem.Position.y;
+            var mainPositionY = clickedItem.ItemPosition.y;
 
             foreach (var item in _activaItems)
             {
-                if (Mathf.Approximately(item.Position.y, mainPositionY))
+                if (Mathf.Approximately(item.ItemPosition.y, mainPositionY))
                     itemsOnSameY.Add(item);
             }
 
@@ -66,11 +65,11 @@ namespace Assets._project.CodeBase
         {
             List<ItemModel> itemsOnSameX = new List<ItemModel>();
 
-            var mainPositionX = clickedItem.Position.x;
+            var mainPositionX = clickedItem.ItemPosition.x;
 
             foreach (var item in _activaItems)
             {
-                if (Mathf.Approximately(item.Position.x, mainPositionX))
+                if (Mathf.Approximately(item.ItemPosition.x, mainPositionX))
                     itemsOnSameX.Add(item);
             }
 
@@ -79,24 +78,16 @@ namespace Assets._project.CodeBase
 
         public List<ItemModel> OnItemsMatched()
         {
-            foreach (ItemModel item in _activaItems)
+            foreach (var item in _activaItems)
                 item.RemoveFromCurrentPoint();
 
             return _activaItems;
         }
 
-        public List<ItemModel> GetAllItems()
-        {
-            return _activaItems.Where(item => item.Item.gameObject.activeSelf).ToList();
-        }
-
-        private void AddAfterReset(ItemModel item)
+        public void AddAfterReset(ItemModel item)
         {
             if (!_items.Contains(item) && !_reserveItems.Contains(item))
-            {
                 _reserveItems.Add(item);
-                _activaItems.Remove(item);
-            }
         }
 
         private void PopulateItemByType()  //Заполнить тип предмета

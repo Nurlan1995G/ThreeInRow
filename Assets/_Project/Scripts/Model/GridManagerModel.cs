@@ -1,6 +1,5 @@
 ﻿using Assets._project.Config;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Assets._project.CodeBase
@@ -30,11 +29,7 @@ namespace Assets._project.CodeBase
 
             foreach (var cell in freeCells)
             {
-                if (cell.IsBusy) 
-                    continue;
-
                 float distance = Vector3.SqrMagnitude(position - cell.transform.position);
-
                 if (distance < minDistance)
                 {
                     minDistance = distance;
@@ -47,8 +42,20 @@ namespace Assets._project.CodeBase
 
         public List<Point> GetFreeCells()
         {
-            return _cells.Where(cell => !cell.IsBusy).ToList();
+            List<Point> freeCells = new List<Point>();
+
+            foreach (var cell in _cells)
+            {
+                if (!cell.IsBusy)
+                {
+                    freeCells.Add(cell);
+                }
+            }
+
+            return freeCells;
         }
+
+
 
         private void FindCells()
         {
@@ -62,7 +69,6 @@ namespace Assets._project.CodeBase
                         break;
 
                     Vector3 position = _gridZone.GetCellPosition(row, col);
-                    _cells[index].SetInfoPositionPoint(row, col);
                     _cells[index].transform.position = position;
                     index++;
                 }
