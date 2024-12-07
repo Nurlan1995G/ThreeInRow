@@ -5,6 +5,8 @@ namespace Assets._project.CodeBase
     public class Point : MonoBehaviour
     {
         [SerializeField] private bool _isBusy;
+        private int _rowPoint;
+        private int _columnPoint;
 
         public bool IsBusy => _isBusy;
 
@@ -20,10 +22,30 @@ namespace Assets._project.CodeBase
             return Vector3.zero;
         }
 
-        public void MarkAsBusy() => 
-            _isBusy = true;
+        public void SetInfoPositionPoint(int row, int column)
+        {
+            _rowPoint = row;
+            _columnPoint = column;
+        }
 
-        public void MarkAsFree() => 
-            _isBusy = false;
+        public (int row, int column) GetInfoPositionPoint()
+        {
+            int row = _rowPoint;
+            int column = _columnPoint;
+
+            return (row, column);
+        }
+
+        public void MarkAsBusy()
+        {
+            if (!_isBusy)
+                _isBusy = true;
+        }
+
+        public void MarkAsFree()
+        {
+            if (_isBusy)
+                _isBusy = false;
+        }
     }
 }

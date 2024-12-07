@@ -82,8 +82,6 @@ namespace Assets._project.CodeBase
             foreach (ItemModel item in _activaItems)
                 item.RemoveFromCurrentPoint();
 
-            Debug.Log(_activaItems.Count + "activate - OnItemsMatched");
-
             return _activaItems;
         }
 
@@ -96,12 +94,8 @@ namespace Assets._project.CodeBase
         {
             if (!_items.Contains(item) && !_reserveItems.Contains(item))
             {
-                Debug.Log(_reserveItems.Count + " - reserve");
                 _reserveItems.Add(item);
-                Debug.Log(_reserveItems.Count + " - reserve");
-                Debug.Log(_activaItems.Count + " - activateItems");
                 _activaItems.Remove(item);
-                Debug.Log(_activaItems.Count + " - activateItems");
             }
         }
 

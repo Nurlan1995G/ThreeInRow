@@ -13,7 +13,7 @@ namespace Assets._project.CodeBase
         public void AnimateShrink(float duration, System.Action onComplete = null)
         {
             _item.Item.transform.DOScale(Vector3.zero, duration)
-                .SetEase(Ease.Linear) 
+                .SetEase(Ease.Linear)
                 .OnComplete(() => onComplete?.Invoke());
         }
     }

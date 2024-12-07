@@ -1,5 +1,6 @@
 ﻿using Assets._project.Config;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets._project.CodeBase
@@ -46,20 +47,7 @@ namespace Assets._project.CodeBase
 
         public List<Point> GetFreeCells()
         {
-            List<Point> freeCells = new List<Point>();
-
-            foreach (var cell in _cells)
-            {
-                if (!cell.IsBusy)
-                {
-                    freeCells.Add(cell);
-                    Debug.Log("Free cell");
-                }
-            }
-
-            Debug.Log("GetFreeCells");
-
-            return freeCells;
+            return _cells.Where(cell => !cell.IsBusy).ToList();
         }
 
         private void FindCells()
@@ -74,6 +62,7 @@ namespace Assets._project.CodeBase
                         break;
 
                     Vector3 position = _gridZone.GetCellPosition(row, col);
+                    _cells[index].SetInfoPositionPoint(row, col);
                     _cells[index].transform.position = position;
                     index++;
                 }

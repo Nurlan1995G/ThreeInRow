@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets._Project.Scripts.Controller
 {
-    public class GameController : Controller
+    public class GameController : MonoBehaviour
     {
         [SerializeField] private GameConfig _gameConfig;
         [SerializeField] private List<Point> _cells;
@@ -55,23 +55,22 @@ namespace Assets._Project.Scripts.Controller
         {
             _playerModel.SubstractScore(_gameConfig.LogicData.SubstractScore);
 
+            var (row, column) = clickedItem.GetCurrentPointData();
+
             List<ItemModel> connectedItemsY = GetConnectedItems(clickedItem, Direction.Vertical);
 
             if (connectedItemsY.Count >= 3)
             {
-                Debug.Log("connectedItemsY.Count >= 3");
-                DeactivateItems(connectedItemsY);
+                DeactivateItems(connectedItemsY, row, column); 
                 return;
             }
 
             List<ItemModel> connectedItemsX = GetConnectedItems(clickedItem, Direction.Horizontal);
 
             if (connectedItemsX.Count >= 3)
-            {
-                Debug.Log("connectedItemsX.Count >= 3");
-                DeactivateItems(connectedItemsX);
-            }
+                DeactivateItems(connectedItemsX, row, column); 
         }
+
 
         private List<ItemModel> GetConnectedItems(ItemModel clickedItem, Direction direction, HashSet<ItemModel> visitedItems = null)
         {
@@ -101,13 +100,37 @@ namespace Assets._Project.Scripts.Controller
             return connectedItems.Distinct().ToList();
         }
 
-        private void DeactivateItems(List<ItemModel> items)
+        private void DeactivateItems(List<ItemModel> items, int row, int column)
         {
             foreach (var item in items)
                 DeactivateItemWithAnimation(item);
 
+            MoveItemsInColumn(row, column);
+
             List<ItemModel> getAllItems = _itemManager.OnItemsMatched();
             StartCoroutine(HandleFallingItems(getAllItems));
+        }
+
+        private void MoveItemsInColumn(int row, int column)
+        {
+            var itemsInColumn = _itemManager.GetAllItems()
+                .Where(item => item.GetCurrentPoint() != null && item.GetCurrentPoint().GetInfoPositionPoint().column == column)
+                .OrderBy(item => item.GetCurrentPoint().GetInfoPositionPoint().row)
+                .ToList();
+
+            for (int i = 0; i < itemsInColumn.Count - 1; i++)
+            {
+                var currentItem = itemsInColumn[i];
+                var nextItem = itemsInColumn[i + 1];
+
+                currentItem.SetPosition(nextItem.Position);
+                currentItem.SetCurrentPoint(nextItem.GetCurrentPoint());
+
+                nextItem.RemoveFromCurrentPoint();
+            }
+
+            var lastItem = itemsInColumn.Last();
+            lastItem.RemoveFromCurrentPoint();
         }
 
         private IEnumerator HandleFallingItems(List<ItemModel> matchedItems)
@@ -125,8 +148,6 @@ namespace Assets._Project.Scripts.Controller
 
             List<Point> freeCells = _gridManagerModel.GetFreeCells();
 
-            Debug.Log(freeCells.Count + " - freeCells.Count");
-
             foreach (var item in itemsAbove)
             {
                 item.Item.Rigidbody2D.constraints |= RigidbodyConstraints2D.FreezePositionY;
@@ -135,7 +156,7 @@ namespace Assets._Project.Scripts.Controller
 
                 if (nearestCell != null)
                 {
-                    item.RemoveFromCurrentPoint(); 
+                    item.RemoveFromCurrentPoint();
                     item.SetCurrentPoint(nearestCell);
                     item.SetPosition(nearestCell.transform.position);
                     nearestCell.MarkAsBusy();
