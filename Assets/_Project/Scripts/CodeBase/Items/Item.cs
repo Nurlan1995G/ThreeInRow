@@ -8,7 +8,7 @@ namespace Assets._project.CodeBase
         [field: SerializeField] public Rigidbody2D Rigidbody2D { get; private set; }
         public ItemModel ItemModel { get; private set; }
 
-        public void Initialize(ItemModel itemModel) => 
+        public void Initialize(ItemModel itemModel) =>
             ItemModel = itemModel;
     }
 

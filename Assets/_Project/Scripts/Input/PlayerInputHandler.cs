@@ -38,7 +38,7 @@ namespace Assets._project.CodeBase
             Collider2D hit = Physics2D.OverlapPoint(mousePosition);
 
             if (hit != null && hit.TryGetComponent(out Item item))
-                OnItemClicked?.Invoke(item.ItemModel); 
+                OnItemClicked?.Invoke(item.ItemModel);
         }
     }
 }

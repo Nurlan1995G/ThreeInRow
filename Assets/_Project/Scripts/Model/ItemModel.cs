@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets._project.CodeBase
 {
@@ -9,7 +8,7 @@ namespace Assets._project.CodeBase
         private Point _currentPoint;
 
         public Item Item => _item;
-        public Vector3 Position => _item.transform.position;
+        public Vector3 ItemPosition => _item.transform.position;
 
         public ItemModel(Item item) =>
             _item = item;
@@ -23,8 +22,8 @@ namespace Assets._project.CodeBase
         public Point GetCurrentPoint() =>
             _currentPoint;
 
-        public (int row, int column) GetCurrentPointData() =>
-            _currentPoint?.GetInfoPositionPoint() ?? (-1, -1); 
+        /*public (int row, int column) GetCurrentPointData() =>
+            _currentPoint?.GetInfoPositionPoint() ?? (-1, -1);*/
 
         public void Activate() =>
             _item.gameObject.SetActive(true);
