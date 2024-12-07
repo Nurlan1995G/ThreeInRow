@@ -7,7 +7,6 @@ namespace Assets._project.Config
     public class GameConfig : ScriptableObject
     {
         public ManagerData ManagerData;
-        public BallData BallData;
         public PlayerData PlayerData;
         public LogicData LogicData;
     }
@@ -15,18 +14,7 @@ namespace Assets._project.Config
     [Serializable]
     public class PlayerData
     {
-        public float MaxShootingForce = 15f;
-        public float MinShootingForce = 5f;
-        public float MaxLineLength = 5f;
-        public float MaxPullDistance = 10f;
-        public int TotalBall = 30;
-    }
-
-    [Serializable]
-    public class BallData
-    {
-        public float MinSpeed;
-        public float MaxSpeed;
+        public int StartCountScore = 10;
     }
 
     [Serializable]
@@ -43,6 +31,9 @@ namespace Assets._project.Config
     [Serializable]
     public class LogicData
     {
-        public int RewardToPlayer = 10;
+        public int SubstractScore = 3;
+        public int Reward = 1;
+        public float DropDuration = 1f;
+        public float ShrinkDuration = 0.5f;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Assets._project.Config;
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -11,7 +10,7 @@ namespace Assets._project.CodeBase
         [SerializeField] private TextMeshProUGUI _scoreText;
         [SerializeField] private TextMeshProUGUI _gameOverText;
 
-        private List<Item> _itemsPool = new List<Item>();
+        private List<ItemModel> _itemsPool = new List<ItemModel>();
         private ManagerData _managerData;
 
         public void Initialize(ManagerData managerData)
@@ -20,13 +19,13 @@ namespace Assets._project.CodeBase
         }
 
         /// Расставляет предметы на указанных ячейках
-        public void InitializeGrid(List<Point> cells, ItemManagerModel itemManager, float cellSize)
+        public void InitializeGrid(List<Point> cells, ItemManagerModel itemManager)
         {
             foreach (var cell in cells)
             {
                 if (!cell.IsBusy)
                 {
-                    Item item = itemManager.GetRandomItem();
+                    ItemModel item = itemManager.GetRandomItem();
 
                     if (item != null)
                         ActivateAndPlaceItem(item, cell);
@@ -34,15 +33,16 @@ namespace Assets._project.CodeBase
             }
         }
 
-        public void RemoveItem(Item item)
+        public void RemoveItem(ItemModel item)
         {
             item.Deactivate();
-            item.transform.position = _managerData.StartPosition;
+            _itemsPool.Remove(item);
+            item.SetPosition(_managerData.StartPosition);
         }
 
-        public void UpdateScore(PlayerModel itemModel)
+        public void UpdateScore(int score)
         {
-            _scoreText.text = $"Score: {itemModel.Score}";
+            _scoreText.text = $"Score: {score}";
         }
 
         public void ShowGameOver(int finalScore)
@@ -51,42 +51,14 @@ namespace Assets._project.CodeBase
             _gameOverText.gameObject.SetActive(true);
         }
 
-        public Item GetItemFromPool()
-        {
-            foreach (var item in _itemsPool)
-            {
-                if (!item.gameObject.activeSelf)
-                {
-                    item.Activate();
-                    return item;
-                }
-            }
-            return null;
-        }
-
-        public void ReturnItemToPool(Item item)
-        {
-            item.gameObject.SetActive(false);
-        }
-
-        private void ActivateAndPlaceItem(Item item, Point cell)
+        private void ActivateAndPlaceItem(ItemModel item, Point cell)
         {
             Vector3 itemPosition = cell.GetPlaceItem(item);
 
             item.Activate();
-            item.SetCurrentPoint(cell);
             item.SetPosition(itemPosition);
             cell.MarkAsBusy();
             _itemsPool.Add(item);
-        }
-
-        public void RemoveItems(List<Item> matchingItems)
-        {
-            foreach (var item in matchingItems)
-            {
-                item.Deactivate();
-                item.transform.position = _managerData.StartPosition;
-            }
         }
 
         /* public void FillGridWithItems()  //Заполните Сетку Элементами

@@ -1,5 +1,6 @@
 ﻿using Assets._project.Config;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets._project.CodeBase
@@ -22,6 +23,33 @@ namespace Assets._project.CodeBase
             FindCells();
         }
 
+        public Point FindNearestFreeCell(Vector3 position, List<Point> freeCells)
+        {
+            float minDistance = float.MaxValue;
+            Point nearestCell = null;
+
+            foreach (var cell in freeCells)
+            {
+                if (cell.IsBusy) 
+                    continue;
+
+                float distance = Vector3.SqrMagnitude(position - cell.transform.position);
+
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearestCell = cell;
+                }
+            }
+
+            return nearestCell;
+        }
+
+        public List<Point> GetFreeCells()
+        {
+            return _cells.Where(cell => !cell.IsBusy).ToList();
+        }
+
         private void FindCells()
         {
             int index = 0;
@@ -34,6 +62,7 @@ namespace Assets._project.CodeBase
                         break;
 
                     Vector3 position = _gridZone.GetCellPosition(row, col);
+                    _cells[index].SetInfoPositionPoint(row, col);
                     _cells[index].transform.position = position;
                     index++;
                 }

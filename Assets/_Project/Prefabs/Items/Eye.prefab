@@ -99,7 +99,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b198f727342c77244a6bb0bb4f09d08c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gameConfig: {fileID: 11400000, guid: 614f15b5a17f7ca489241a404d6d155d, type: 2}
   <TypeItem>k__BackingField: 3
+  <Rigidbody2D>k__BackingField: {fileID: 2365490858121207536}
 --- !u!50 &2365490858121207536
 Rigidbody2D:
   serializedVersion: 4
@@ -120,7 +122,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 5
+  m_Constraints: 7
 --- !u!58 &6877257586500673426
 CircleCollider2D:
   m_ObjectHideFlags: 0

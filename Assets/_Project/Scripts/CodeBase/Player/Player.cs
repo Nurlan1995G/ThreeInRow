@@ -9,13 +9,13 @@ namespace Assets._project.CodeBase
         [SerializeField] private TextMeshProUGUI _scoreText;
 
         private PlayerUI _playerUI;
-        private PlayerInput _input;
+        private PlayerInputHandler _input;
 
         private int _score;
 
         public PlayerData PlayerData { get; private set; }
 
-        public void Construct(PlayerData playerData, PlayerInput input, ParticleSystem effectNextBall, ItemManagerModel ballManager)
+        public void Construct(PlayerData playerData, PlayerInputHandler input, ParticleSystem effectNextBall, ItemManagerModel ballManager)
         {
             PlayerData = playerData;
             _input = input;

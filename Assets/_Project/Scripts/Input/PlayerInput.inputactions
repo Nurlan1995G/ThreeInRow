@@ -1,0 +1,34 @@
+{
+    "name": "PlayerInput",
+    "maps": [
+        {
+            "name": "Clicked",
+            "id": "90e6a501-f4b6-4e4e-97ad-a7ca312a33e7",
+            "actions": [
+                {
+                    "name": "MouseTap",
+                    "type": "PassThrough",
+                    "id": "f105eeb9-790f-4527-bcef-74993ceb0ea5",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "dd471369-8913-43e2-91ec-596b58e1f49d",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseTap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

@@ -2,8 +2,8 @@
 {
     public class PlayerModel
     {
-        private int _score;
         private GameView _gameView;
+        private int _score;
 
         public int Score => _score;
 
@@ -18,7 +18,13 @@
         public void UpdateScore(int score)
         {
             _score += score;
-            _gameView.UpdateScore(this);
+            _gameView.UpdateScore(_score);
+        }
+
+        public void SubstractScore(int score)
+        {
+            _score -= score;
+            _gameView.UpdateScore(_score);
         }
     }
 }

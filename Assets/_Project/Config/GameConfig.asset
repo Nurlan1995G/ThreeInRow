@@ -19,14 +19,10 @@ MonoBehaviour:
     CellSize: 1
     TotalItemsToLoad: 50
     StartPosition: {x: -2.8, y: 7.5, z: 0}
-  BallData:
-    MinSpeed: 1
-    MaxSpeed: 3
   PlayerData:
-    MaxShootingForce: 15
-    MinShootingForce: 5
-    MaxLineLength: 0.5
-    MaxPullDistance: 10
-    TotalBall: 30
+    StartCountScore: 10
   LogicData:
-    RewardToPlayer: 10
+    SubstractScore: 3
+    Reward: 1
+    DropDuration: 1
+    ShrinkDuration: 0.5
