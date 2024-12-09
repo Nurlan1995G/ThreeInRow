@@ -23,14 +23,6 @@ namespace Assets._Project.Scripts.Controller
         private void Start() => 
             Initialize();
 
-        //Сбрасывает игру, заново инициализируя игрока со стартовым счетом, видом игры и сеткой
-        public void ResetGame()
-        {
-            _playerModel = new PlayerModel(_gameConfig.PlayerData.StartCountScore, _gameView);
-            _gameView.Initialize(_gameConfig.ManagerData);
-            _gameView.InitializeGrid(_cells, _itemManager);
-        }
-
         //Инициализирует различные компоненты игры все необходимые
         private void Initialize()
         {

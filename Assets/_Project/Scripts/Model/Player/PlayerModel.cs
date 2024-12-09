@@ -24,6 +24,8 @@ namespace Assets._project.CodeBase
         {
             _currentScore += score;
             _totalScore += score;
+            Debug.Log("_totalscore - " + _totalScore);
+            Debug.Log("Totalscore - " + TotalScore);
             _gameView.UpdateScore(_currentScore);
             _gameView.UpdateMoves(_totalScore);
         }

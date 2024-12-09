@@ -27,6 +27,8 @@ namespace Assets._Project.Scripts.Controller
         //Обрабатывает щелчки по предметам, проверяя, достаточно ли у игрока очков, чтобы сделать ход. Вычитает баллы при нажатии на элемент.Проверяет наличие связанных элементов в вертикальном и горизонтальном направлениях (используя GetConnectedItems).Если найдено совпадение из 3 или более элементов, это запускает onMatchFoundдействие.
         public void HandleClick(ItemModel clickedItem)
         {
+            Debug.Log("Totalscore - HandleClick - " + _playerModel.TotalScore);
+
             if (_playerModel.TotalScore <= 0)
             {
                 _onGameEnd?.Invoke();

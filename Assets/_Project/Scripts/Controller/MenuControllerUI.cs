@@ -38,7 +38,6 @@ namespace Assets._project.CodeBase
         private void StartNewGame()
         {
             _mainMenu.SetActive(false);
-            _gameController.ResetGame();
             ResumeGame();
         }
 
