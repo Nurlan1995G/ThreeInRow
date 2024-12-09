@@ -16,6 +16,7 @@ namespace Assets._project.CodeBase
             _playerInput = new PlayerInput();
             _mainCamera = Camera.main;
 
+            _playerInput.Clicked.MouseTap.performed -= OnClick;
             _playerInput.Clicked.MouseTap.performed += OnClick;
         }
 

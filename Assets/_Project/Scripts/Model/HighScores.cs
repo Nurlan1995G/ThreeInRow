@@ -8,6 +8,7 @@ namespace Assets._project.CodeBase
     public class HighScores
     {
         public List<RecordModel> Records = new List<RecordModel>();
+        public int CurrentScore;
 
         public void AddRecord(string playerName, int score)
         {
@@ -15,4 +16,5 @@ namespace Assets._project.CodeBase
             Records = Records.OrderByDescending(r => r.Score).Take(3).ToList(); // Сортируем по убыванию и сохраняем только 3 лучших
         }
     }
+
 }

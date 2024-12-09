@@ -6,6 +6,7 @@ namespace Assets._Project.Scripts.Controller
 {
     public class RecordsController : MonoBehaviour
     {
+        [SerializeField] private RecordView _recordView;
         private string _filePath;
 
         public HighScores HighScores { get; private set; }
@@ -40,10 +41,17 @@ namespace Assets._Project.Scripts.Controller
             File.WriteAllText(_filePath, json);
         }
 
+        public void SaveCurrentScore(int currentScore)
+        {
+            HighScores.CurrentScore = currentScore;
+            SaveHighScores();
+        }
+
         public void AddNewRecord(string playerName, int score)
         {
             HighScores.AddRecord(playerName, score);
             SaveHighScores();
+            _recordView.UpdateRecords(HighScores); 
         }
     }
 }

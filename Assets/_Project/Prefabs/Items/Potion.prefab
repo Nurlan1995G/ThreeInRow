@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3354947848929800416}
   - component: {fileID: 3354947848929800431}
-  - component: {fileID: 3354947848929800417}
   - component: {fileID: 3602462461043123725}
   - component: {fileID: -6895717934295162758}
   - component: {fileID: 4263679807197653082}
+  - component: {fileID: 772560580090531140}
   m_Layer: 0
   m_Name: Potion
   m_TagString: Untagged
@@ -88,21 +88,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3354947848929800417
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3354947848929800430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b198f727342c77244a6bb0bb4f09d08c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <TypeItem>k__BackingField: 2
-  <Rigidbody2D>k__BackingField: {fileID: 3602462461043123725}
-  <Animator>k__BackingField: {fileID: 4263679807197653082}
 --- !u!50 &3602462461043123725
 Rigidbody2D:
   serializedVersion: 4
@@ -111,7 +96,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3354947848929800430}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -123,7 +108,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 7
+  m_Constraints: 5
 --- !u!58 &-6895717934295162758
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -161,3 +146,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &772560580090531140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3354947848929800430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ecf2fcc38122c44683db2c641dae993, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <TypeItem>k__BackingField: 2
+  <Rigidbody2D>k__BackingField: {fileID: 3602462461043123725}
+  <Animator>k__BackingField: {fileID: 4263679807197653082}

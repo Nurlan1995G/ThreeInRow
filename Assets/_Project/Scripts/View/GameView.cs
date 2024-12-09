@@ -8,7 +8,7 @@ namespace Assets._project.CodeBase
     public class GameView : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _scoreText;
-        [SerializeField] private TextMeshProUGUI _gameOverText;
+        [SerializeField] private TextMeshProUGUI _movesText;
 
         private List<ItemModel> _itemsPool = new List<ItemModel>();
         private ManagerData _managerData;
@@ -45,10 +45,11 @@ namespace Assets._project.CodeBase
             _scoreText.text = $"Score: {score}";
         }
 
-        public void ShowGameOver(int finalScore)
+        public void UpdateMoves(int moves)
         {
-            _gameOverText.text = $"Game Over! Final Score: {finalScore}";
-            _gameOverText.gameObject.SetActive(true);
+            moves /= 3;
+
+            _movesText.text = $"Ходы: {moves}";
         }
 
         private void ActivateAndPlaceItem(ItemModel item, Point cell)
