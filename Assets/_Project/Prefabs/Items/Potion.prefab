@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3354947848929800417}
   - component: {fileID: 3602462461043123725}
   - component: {fileID: -6895717934295162758}
+  - component: {fileID: 4263679807197653082}
   m_Layer: 0
   m_Name: Potion
   m_TagString: Untagged
@@ -99,9 +100,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b198f727342c77244a6bb0bb4f09d08c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameConfig: {fileID: 11400000, guid: 614f15b5a17f7ca489241a404d6d155d, type: 2}
   <TypeItem>k__BackingField: 2
   <Rigidbody2D>k__BackingField: {fileID: 3602462461043123725}
+  <Animator>k__BackingField: {fileID: 4263679807197653082}
 --- !u!50 &3602462461043123725
 Rigidbody2D:
   serializedVersion: 4
@@ -139,3 +140,24 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 1.25
+--- !u!95 &4263679807197653082
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3354947848929800430}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e0a0027505d646144b31018449d6058c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

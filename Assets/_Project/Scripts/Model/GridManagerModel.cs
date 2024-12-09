@@ -55,8 +55,6 @@ namespace Assets._project.CodeBase
             return freeCells;
         }
 
-
-
         private void FindCells()
         {
             int index = 0;

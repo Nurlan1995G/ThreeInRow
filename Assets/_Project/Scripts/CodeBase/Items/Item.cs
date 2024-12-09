@@ -6,6 +6,7 @@ namespace Assets._project.CodeBase
     {
         [field: SerializeField] public TypeItem TypeItem { get; private set; }
         [field: SerializeField] public Rigidbody2D Rigidbody2D { get; private set; }
+        [field: SerializeField] public Animator Animator { get; private set; }
         public ItemModel ItemModel { get; private set; }
 
         public void Initialize(ItemModel itemModel) =>

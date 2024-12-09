@@ -22,9 +22,6 @@ namespace Assets._project.CodeBase
         public Point GetCurrentPoint() =>
             _currentPoint;
 
-        /*public (int row, int column) GetCurrentPointData() =>
-            _currentPoint?.GetInfoPositionPoint() ?? (-1, -1);*/
-
         public void Activate() =>
             _item.gameObject.SetActive(true);
 

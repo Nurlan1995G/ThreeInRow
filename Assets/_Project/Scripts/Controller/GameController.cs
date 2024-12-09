@@ -106,21 +106,17 @@ namespace Assets._Project.Scripts.Controller
                 _playerModel.UpdateScore(_gameConfig.LogicData.Reward);
             }
 
-            var getAllItems = _itemManager.OnItemsMatched();
+            List<ItemModel> getAllItems = _itemManager.OnItemsMatched();
             StartCoroutine(HandleFallingItems(getAllItems));
         }
 
         private IEnumerator HandleFallingItems(List<ItemModel> getAllItems)
         {
-            // Сброс ограничений для всех объектов
-            foreach (var item in getAllItems)
-            {
+            foreach (ItemModel item in getAllItems)
                 item.Item.Rigidbody2D.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
-            }
 
             yield return new WaitForSeconds(_gameConfig.LogicData.DropDuration);
 
-            // Оптимизация поиска ближайших ячеек
             var freeCells = _gridManagerModel.GetFreeCells();
 
             foreach (var item in getAllItems)
