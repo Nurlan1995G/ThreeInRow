@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets._project.CodeBase
@@ -48,32 +49,15 @@ namespace Assets._project.CodeBase
 
         public List<ItemModel> GetItemsOnSameY(ItemModel clickedItem)
         {
-            List<ItemModel> itemsOnSameY = new List<ItemModel>();
-
-            var mainPositionY = clickedItem.ItemPosition.y;
-
-            foreach (var item in _activaItems)
-            {
-                if (Mathf.Approximately(item.ItemPosition.y, mainPositionY))
-                    itemsOnSameY.Add(item);
-            }
-
-            return itemsOnSameY;
+            float mainPositionY = clickedItem.ItemPosition.y;
+            return _activaItems.Where(item => Mathf.Approximately(item.ItemPosition.y, mainPositionY)).ToList();
         }
+
 
         public List<ItemModel> GetItemsOnSameX(ItemModel clickedItem)
         {
-            List<ItemModel> itemsOnSameX = new List<ItemModel>();
-
-            var mainPositionX = clickedItem.ItemPosition.x;
-
-            foreach (var item in _activaItems)
-            {
-                if (Mathf.Approximately(item.ItemPosition.x, mainPositionX))
-                    itemsOnSameX.Add(item);
-            }
-
-            return itemsOnSameX;
+            float mainPositionX = clickedItem.ItemPosition.x;
+            return _activaItems.Where(item => Mathf.Approximately(item.ItemPosition.x, mainPositionX)).ToList();
         }
 
         public List<ItemModel> OnItemsMatched()
@@ -87,7 +71,10 @@ namespace Assets._project.CodeBase
         public void AddAfterReset(ItemModel item)
         {
             if (!_items.Contains(item) && !_reserveItems.Contains(item))
+            {
+                _activaItems.Remove(item);
                 _reserveItems.Add(item);
+            }
         }
 
         private void PopulateItemByType()  //Заполнить тип предмета

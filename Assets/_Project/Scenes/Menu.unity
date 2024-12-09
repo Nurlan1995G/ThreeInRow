@@ -123,28 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &307718375 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3931883677939964716, guid: 88c2a6f5e4d194a46b15a18f6f2de65c, type: 3}
-  m_PrefabInstance: {fileID: 1259582378}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &506068981 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4018830523390708475, guid: 88c2a6f5e4d194a46b15a18f6f2de65c, type: 3}
-  m_PrefabInstance: {fileID: 1259582378}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,38 +364,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6019457865658127620, guid: 88c2a6f5e4d194a46b15a18f6f2de65c, type: 3}
+    - {fileID: 3248648721381705032, guid: 88c2a6f5e4d194a46b15a18f6f2de65c, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 88c2a6f5e4d194a46b15a18f6f2de65c, type: 3}
---- !u!114 &1298339369 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6397546460095440634, guid: 88c2a6f5e4d194a46b15a18f6f2de65c, type: 3}
-  m_PrefabInstance: {fileID: 1259582378}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &1567071658 stripped
+--- !u!1 &1259582379 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 4894991459423106911, guid: 88c2a6f5e4d194a46b15a18f6f2de65c, type: 3}
+  m_CorrespondingSourceObject: {fileID: 3248648721381705038, guid: 88c2a6f5e4d194a46b15a18f6f2de65c, type: 3}
   m_PrefabInstance: {fileID: 1259582378}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1567071664
+--- !u!114 &1259582380
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1567071658}
+  m_GameObject: {fileID: 1259582379}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 110cccf1daa6b6648b731e7bb6dbef87, type: 3}
+  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NewGameButton: {fileID: 307718375}
-  RecordsButton: {fileID: 506068981}
-  ExitButton: {fileID: 1298339369}
+  m_SendPointerHoverToParent: 1
+  m_MoveRepeatDelay: 0.5
+  m_MoveRepeatRate: 0.1
+  m_XRTrackingOrigin: {fileID: 0}
+  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_PointAction: {fileID: -1654692200621890270, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_MoveAction: {fileID: -8784545083839296357, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_SubmitAction: {fileID: 392368643174621059, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_CancelAction: {fileID: 7727032971491509709, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_LeftClickAction: {fileID: 3001919216989983466, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_MiddleClickAction: {fileID: -2185481485913320682, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_RightClickAction: {fileID: -4090225696740746782, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_ScrollWheelAction: {fileID: 6240969308177333660, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_TrackedDevicePositionAction: {fileID: 6564999863303420839, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_TrackedDeviceOrientationAction: {fileID: 7970375526676320489, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_DeselectOnBackgroundClick: 1
+  m_PointerBehavior: 0
+  m_CursorLockBehavior: 0
 --- !u!1 &1749765253 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3248648720923905593, guid: 88c2a6f5e4d194a46b15a18f6f2de65c, type: 3}

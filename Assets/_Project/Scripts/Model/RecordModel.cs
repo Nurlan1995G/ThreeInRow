@@ -3,14 +3,14 @@
 namespace Assets._project.CodeBase
 {
     [Serializable]
-    public class Record
+    public class RecordModel
     {
-        public string Name;
+        public string PlayerName;
         public int Score;
 
-        public Record(string name, int score)
+        public RecordModel(string playerName, int score)
         {
-            Name = name;
+            PlayerName = playerName;
             Score = score;
         }
     }

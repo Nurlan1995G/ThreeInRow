@@ -60,19 +60,5 @@ namespace Assets._project.CodeBase
             cell.MarkAsBusy();
             _itemsPool.Add(item);
         }
-
-        /* public void FillGridWithItems()  //Заполните Сетку Элементами
-         {
-             for (int i = 0; i < _cells.Count; i++)
-             {
-                 if (i < _managerData.TotalItemsToLoad && !_cells[i].IsBusy)
-                 {
-                     Item item = _itemManager.GetRandomItem();
-
-                     if (item != null)
-                         _cells[i].GetPlaceItem(item);
-                 }
-             }
-         }*/
     }
 }
