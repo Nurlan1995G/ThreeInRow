@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Assets._project.CodeBase
 {
+    //управляет пользовательским интерфейсом (UI), связанным с видом игры, включая отображение счета, ходов и активацию элементов на сетке
     public class GameView : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _scoreText;
@@ -18,7 +19,7 @@ namespace Assets._project.CodeBase
             _managerData = managerData;
         }
 
-        /// Расставляет предметы на указанных ячейках
+        //Инициализирует сетку, проверяя каждую ячейку и заполняя ее случайным элементом из менеджера элементов, если ячейка еще не занята
         public void InitializeGrid(List<Point> cells, ItemManagerModel itemManager)
         {
             foreach (var cell in cells)
@@ -33,6 +34,7 @@ namespace Assets._project.CodeBase
             }
         }
 
+        //Деактивирует элемент, удаляет его из пула элементов и сбрасывает его положение в начальное положение
         public void RemoveItem(ItemModel item)
         {
             item.Deactivate();
@@ -40,11 +42,13 @@ namespace Assets._project.CodeBase
             item.SetPosition(_managerData.StartPosition);
         }
 
+        //Обновляет отображение результатов в пользовательском интерфейсе
         public void UpdateScore(int score)
         {
             _scoreText.text = $"Score: {score}";
         }
 
+        //Обновляет отображение ходов в пользовательском интерфейсе, деля количество ходов 
         public void UpdateMoves(int moves)
         {
             moves /= 3;
@@ -52,6 +56,7 @@ namespace Assets._project.CodeBase
             _movesText.text = $"Ходы: {moves}";
         }
 
+        //Активирует указанный элемент, помещает его в указанную ячейку и отмечает ячейку как занятую. Затем элемент добавляется в пул элементов
         private void ActivateAndPlaceItem(ItemModel item, Point cell)
         {
             Vector3 itemPosition = cell.GetPlaceItem(item);

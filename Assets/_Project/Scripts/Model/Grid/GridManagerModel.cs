@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Assets._project.CodeBase
 {
+    //Управляет ячейками сетки и их доступностью (свободны или заняты). Может находить ближайшую свободную ячейку и управлять размещением элементов в сетке. Координирует работу с другими менеджерами по заполнению сетки.
     public class GridManagerModel
     {
         private List<Point> _cells;
@@ -22,6 +23,7 @@ namespace Assets._project.CodeBase
             FindCells();
         }
 
+        //Принимает текущую позицию и список свободных ячеек. Находит ближайшую свободную ячейку, сравнивая квадрат расстояния до каждой свободной ячейки. Возвращает ближайшую свободную ячейку.
         public Point FindNearestFreeCell(Vector3 position, List<Point> freeCells)
         {
             float minDistance = float.MaxValue;
@@ -40,6 +42,7 @@ namespace Assets._project.CodeBase
             return nearestCell;
         }
 
+        //Проходит по всем ячейкам и проверяет, «свободны» ли они (т.е. не заняты). Возвращает список всех свободных ячеек.
         public List<Point> GetFreeCells()
         {
             List<Point> freeCells = new List<Point>();
@@ -55,6 +58,7 @@ namespace Assets._project.CodeBase
             return freeCells;
         }
 
+        //Инициализирует сетку, задавая положение каждой ячейки в сетке. Он проходит по строкам и столбцам, помещая ячейки в вычисленные позиции и назначая индексы строк и столбцов.
         private void FindCells()
         {
             int index = 0;

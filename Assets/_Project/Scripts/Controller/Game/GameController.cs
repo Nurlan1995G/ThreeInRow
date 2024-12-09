@@ -23,6 +23,7 @@ namespace Assets._Project.Scripts.Controller
         private void Start() => 
             Initialize();
 
+        //Сбрасывает игру, заново инициализируя игрока со стартовым счетом, видом игры и сеткой
         public void ResetGame()
         {
             _playerModel = new PlayerModel(_gameConfig.PlayerData.StartCountScore, _gameView);
@@ -30,6 +31,7 @@ namespace Assets._Project.Scripts.Controller
             _gameView.InitializeGrid(_cells, _itemManager);
         }
 
+        //Инициализирует различные компоненты игры все необходимые
         private void Initialize()
         {
             GameInitializer initializer = new GameInitializer();
@@ -45,6 +47,7 @@ namespace Assets._Project.Scripts.Controller
             _playerInput.OnItemClicked += itemClickHandler.HandleClick;
         }
 
+        //Вызывается при обнаружении совпадения элементов. Он заменяет совпадающие элементы в ItemManager, удаляет их из игрового представления и обновляет счет игрока. Вызовы HandleFallingдля обработки поведения падения предметов после их деактивации.
         private void DeactivateItems(List<ItemModel> items)
         {
             foreach (var item in items)
@@ -59,6 +62,7 @@ namespace Assets._Project.Scripts.Controller
             StartCoroutine(_itemDropHandler.HandleFalling(getAllItems));
         }
 
+        //Завершает игру, сохраняя счет игрока и отображая окончательный счет в пользовательском интерфейсе игры
         private void EndGame()
         {
             _recordsController.AddNewRecord("Player", _playerModel.CurrentScore);

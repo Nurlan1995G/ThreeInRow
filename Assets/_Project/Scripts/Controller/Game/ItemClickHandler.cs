@@ -24,6 +24,7 @@ namespace Assets._Project.Scripts.Controller
             _onGameEnd = onGameEnd;
         }
 
+        //Обрабатывает щелчки по предметам, проверяя, достаточно ли у игрока очков, чтобы сделать ход. Вычитает баллы при нажатии на элемент.Проверяет наличие связанных элементов в вертикальном и горизонтальном направлениях (используя GetConnectedItems).Если найдено совпадение из 3 или более элементов, это запускает onMatchFoundдействие.
         public void HandleClick(ItemModel clickedItem)
         {
             if (_playerModel.TotalScore <= 0)
@@ -48,7 +49,7 @@ namespace Assets._Project.Scripts.Controller
                 _onMatchFound.Invoke(connectedItemsX);
         }
 
-
+        //Рекурсивно находит все связанные элементы одного типа в указанном направлении (вертикальном или горизонтальном). Использует поиск в глубину для нахождения всех соответствующих элементов, гарантируя, что ни один элемент не будет повторно просмотрен во время поиска.
         private List<ItemModel> GetConnectedItems(ItemModel clickedItem, Direction direction, HashSet<ItemModel> visitedItems = null)
         {
             if (visitedItems == null)

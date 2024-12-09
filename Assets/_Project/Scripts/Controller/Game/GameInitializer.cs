@@ -6,6 +6,7 @@ namespace Assets._Project.Scripts.Controller
 {
     public class GameInitializer
     {
+        //Инициализирует ItemManagerModelи создает ItemModelэкземпляры из списка элементов. Каждый элемент инициализируется с помощью ItemModel, а модели сохраняются в списке для использования ItemManagerModel.
         public ItemManagerModel InitializeItemManager(List<Item> items, out List<ItemModel> itemModels)
         {
             itemModels = new List<ItemModel>();

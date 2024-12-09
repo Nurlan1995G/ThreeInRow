@@ -8,18 +8,18 @@ namespace Assets._project.CodeBase
     public class MenuControllerUI : MonoBehaviour
     {
         [Header("UI Elements")]
-        [SerializeField] private GameObject _mainMenu; // Главное меню
-        [SerializeField] private GameObject _recordsPanel; // Панель с рекордами
-        [SerializeField] private GameObject _gameOverPanel; // Панель "Игра окончена"
-        [SerializeField] private TextMeshProUGUI _scoreText; // Текст для отображения очков
-        [SerializeField] private Button _newGameButton; // Кнопка "Новая игра"
-        [SerializeField] private Button _recordsButton; // Кнопка "Рекорды"
-        [SerializeField] private Button _exitButton; // Кнопка "Выход"
-        [SerializeField] private Button _openMenuButton; // Кнопка "Открыть меню"
+        [SerializeField] private GameObject _mainMenu; 
+        [SerializeField] private GameObject _recordsPanel; 
+        [SerializeField] private GameObject _gameOverPanel; 
+        [SerializeField] private TextMeshProUGUI _scoreText; 
+        [SerializeField] private Button _newGameButton;
+        [SerializeField] private Button _recordsButton;
+        [SerializeField] private Button _exitButton; 
+        [SerializeField] private Button _openMenuButton; 
 
         [Header("Game Controllers")]
-        [SerializeField] private RecordsController _recordsController; // Контроллер рекордов
-        [SerializeField] private GameController _gameController; // Контроллер игры
+        [SerializeField] private RecordsController _recordsController; 
+        [SerializeField] private GameController _gameController;
 
         private bool _isGamePaused;
 

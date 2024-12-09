@@ -31,7 +31,6 @@ namespace Assets._project.CodeBase
         public void SubtractCurrentScore(int score)
         {
             _totalScore -= score;
-            Debug.Log(_totalScore + " - totalScores");
             _gameView.UpdateMoves(_totalScore);
         }
     }
