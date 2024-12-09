@@ -27,6 +27,7 @@ namespace Assets._project.Config
         public int TotalItemsToLoad = 50;
         public Vector3 StartPosition = new Vector3(-2.5f,2,0);
         public Vector3 ReduceSize = new Vector3(0.1f, 0.1f, 0.1f);
+        public int MoveCount = 3;
     }
 
     [Serializable]

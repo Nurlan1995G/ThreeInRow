@@ -51,7 +51,7 @@ namespace Assets._project.CodeBase
         //Обновляет отображение ходов в пользовательском интерфейсе, деля количество ходов 
         public void UpdateMoves(int moves)
         {
-            moves /= 3;
+            moves /= _managerData.MoveCount;
 
             _movesText.text = $"Ходы: {moves}";
         }
